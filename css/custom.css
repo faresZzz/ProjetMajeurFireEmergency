@@ -32,35 +32,36 @@ header {
     padding: 2%;
   }
   
-aside_up {
+aside_left {
     clear: left;
     float: left;
-    width: 28%;
-    max-height: 80%;
-    margin-right: 2%;
-    padding: 2%;
+    width: 20%;
+    height: 100%;
+    /* margin-right: 2%; */
+    /* padding: 2%; */
     background: rgb(195, 195, 195);
 }
 
-aside_down {
+footer {
     clear: left;
-    float: left;
-    width: 28%;
-    max-height: 80%;
-    margin-right: 2%;
-    padding: 2%;
+    float:left;
+    width: 100%;
+    max-height: 20%;
+    /* margin-right: 2%; */
+    /* padding: 2%; */
     background: rgb(195, 195, 195);
     }
 
 main {
-    float: left;
-    width: 68%;
-    height: 80%;
-    margin-left: 2%;
-    padding: 2%;
+    float: right;
+    width: 80%;
+    height: 100%;
+    /* margin-left: 2%; */
+    /* padding: 2%; */
     background: green;
 }
 
-.map_image {
-    height: 100%;
+#map {
+    height: 600px;
+    width: 100%;
 }
