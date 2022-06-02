@@ -7,74 +7,154 @@
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
    	integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
    	crossorigin=""/>
+    <link rel="stylesheet" type="text/css" href="../lib/Semantic-UI-CSS-master/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/custom.css">
 	<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
    	integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
    	crossorigin=""></script>
 </head>
 
 <body>
-	
-	<div id="map"></div>
-	<form>
-		<fieldset>
-			  <div>
-					<input type="checkbox" id="fire" name="interest" value="fire" checked>
-					<label for="fire">Feux</label>
-			  </div>
-			  <div>
-					<input type="checkbox" id="facility" name="interest" value="facility" checked>
-					<label for="facility">Casernes</label>
-			  </div>
-			  <div>
-				<input type="checkbox" id="truck" name="interest" value="truck" checked>
-				<label for="truck">Camions</label>
-		  </div>
-	  </fieldset>
-  	</form>
-	  <form name="fireFilter" id="fireFilter">
-        <fieldset name="fireTypeFilter">
-            <legend>Types de feu</legend>
-            <div>
-                <input type="checkbox" id="A" value="a" checked>
-                <label>A</label>
+
+	<main>
+	    <div id="map"></div>
+    </main>
+
+    <aside_left>
+        <form>
+            <fieldset>
+                <div>
+                        <input type="checkbox" id="fire" name="interest" value="fire" checked>
+                        <label for="fire">Feux</label>
+                </div>
+                <div>
+                        <input type="checkbox" id="facility" name="interest" value="facility" checked>
+                        <label for="facility">Casernes</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="truck" name="interest" value="truck" checked>
+                    <label for="truck">Camions</label>
+                </div>
+            </fieldset>
+        </form>
+        <form name="fireFilter" id="fireFilter">
+            <fieldset name="fireTypeFilter">
+                <legend>Types de feu</legend>
+                <div>
+                    <input type="checkbox" id="A" value="a" checked>
+                    <label>A</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="B_gasoline" value="b_gasoline" checked>
+                    <label>B_Gasoline</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="B_Alcohol" value="b_alcohol" checked>
+                    <label>B_Alcohol</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="B_Plastics" value="b_plastics" checked>
+                    <label>B_Plastics</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="C_flammable_gases" value="c_flammable_gases" checked>
+                    <label>C_Flammable_Gases</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="D_Metals" value="d_metals" checked>
+                    <label>D_Metals</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="E_Electrics" value="e_electrics" checked>
+                    <label>E_Electrics</label>
+                </div>
+                <!-- <div>
+                    <input type="range" min="0" max="50" class="slider" value="25" name="range" id="range">range
+                    <p>Value: <span id="demo"></span></p>
+                </div>
+                <div>
+                    <input type="range" min="0" max="50" name="intensity" id="intensity">intensity
+                    <p>Value: <span id="demo1"></span></p>
+                </div> -->
+            </fieldset>
+        </form>
+
+        <form class="ui form" action="#" method="GET" id="addTrukForm">
+            <fieldset>
+            <legend>Ajouter un véhicule</legend>
+            <!-- <h3 class="ui dividing header">Ajouter un camion</h3> -->
+            
+            <!-- <div class="field">
+                <label>Longitude</label>
+                <input type="text" name="Longitude" placeholder="longitude"id="longitude">
             </div>
-            <div>
-                <input type="checkbox" id="B_gasoline" value="b_gasoline" checked>
-                <label>B_Gasoline</label>
+    
+            <div class="field">
+                <label>Latitute</label>
+                <input type="text" name="Latitute" placeholder="Latitute"  id="Latitute">
+            </div> -->
+    
+            <div class="field">
+                <label>Type</label>
+                <select name="Type" id="Type" onchange="filter()">
+                    <option value="CAR">CAR</option>
+                    <option value="FIRE_ENGINE">FIRE_ENGINE</option>
+                    <option value="PUMPER_TRUCK">PUMPER_TRUCK</option>
+                    <option value="WATER_TENDERS">WATER_TENDERS</option>
+                    <option value="TURNTABLE_LADDER_TRUCK">TURNTABLE_LADDER_TRUCK</option>
+                    <option value="TRUCK">TRUCK</option>
+                  </select>
             </div>
-            <div>
-                <input type="checkbox" id="B_Alcohol" value="b_alcohol" checked>
-                <label>B_Alcohol</label>
+            <div class="field">
+                <label>Affinity</label>
+                <select name="Affinity" id="Affinity" >
+                    <option value="ALL">ALL</option>
+                    <option value="WATER">WATER</option>
+                    <option value="WATER_WITH_ADDITIVES">WATER_WITH_ADDITIVES</option>
+                    <option value="CARBON_DIOXIDE">CARBON_DIOXIDE</option>
+                    <option value="POWDER">POWDER</option>
+                  </select>
             </div>
-            <div>
-                <input type="checkbox" id="B_Plastics" value="b_plastics" checked>
-                <label>B_Plastics</label>
+            <div class="slidecontainer">
+                <label>liquidQuantity</label>
+                <input name="liquidQuantity" type="range" min="1" max="100" value="1" class="slider" id="liquidQuantityRange" onchange="sliderValue()">
+                <label id="outputLiquidQuantityRange" for="liquidQuantityRange"></label>
             </div>
-            <div>
-                <input type="checkbox" id="C_flammable_gases" value="c_flammable_gases" checked>
-                <label>C_Flammable_Gases</label>
+            <div class="slidecontainer">
+                <label>fuel</label>
+                <input name="fuel" type="range" min="1" max="100" value="1" class="slider" id="fuelRange" onchange="sliderValue()">
+                <label id="outputFuelRange" for="fuelRange"></label>
             </div>
-            <div>
-                <input type="checkbox" id="D_Metals" value="d_metals" checked>
-                <label>D_Metals</label>
+            <div class="slidecontainer">
+                <label>crew Member</label>
+                <input name="crewMember" type="number" min="1" max="100" value="1" class="slider" id="crewMemberRange" >
             </div>
-            <div>
-                <input type="checkbox" id="E_Electrics" value="e_electrics" checked>
-                <label>E_Electrics</label>
+            <div class="slidecontainer">
+                <label for="facilityRefIDRange">Caserne d'affectation</label>
+                <select name="facilityRefID" id="facilityRefIDRange" >
+                    <option value="81">Caserne n° 81</option>
+                  </select>
             </div>
-            <div>
-                <input type="range" min="0" max="50" class="slider" value="25" name="range" id="range">range
-                <p>Value: <span id="demo"></span></p>
+            <button class="ui button" type="button">Cancel</button>
+            <button class="ui button" type="button" style="float: right;" onclick="createTruk()">+ OK</button>
+        </form>
+    
+    
+        <form action="#" id="DeleteTruck">
+            <div class="field">
+            <select name="selectVehicule" id="selectVehicule"></select>
             </div>
-            <div>
-                <input type="range" min="0" max="50" name="intensity" id="intensity">intensity
-                <p>Value: <span id="demo1"></span></p>
-            </div>
+    
+            <button class="ui button" type="button" style="float: right;" onclick="deleteTruk()">Delete</button>
         </fieldset>
-    </form>
-	<script src="map.js">
-		
-	</script>
+        </form>
+    </aside_left>
+
+    <footer>
+        
+    </footer>
+
+	<script src="map.js"></script>
 
 
 </body>
