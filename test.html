@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page de création de camion</title>
+</head>
+<body>
+    <form class="ui form" action="#" method="GET" id="addTrukForm">
+        <h3 class="ui dividing header">Ajouter un camion</h3>
+        
+        <!-- <div class="field">
+            <label>Longitude</label>
+            <input type="text" name="Longitude" placeholder="longitude"id="longitude">
+        </div>
+
+        <div class="field">
+            <label>Latitute</label>
+            <input type="text" name="Latitute" placeholder="Latitute"  id="Latitute">
+        </div> -->
+
+        <div class="field">
+            <label>Type</label>
+            <select name="Type" id="Type" onchange="filter()">
+                <option value="CAR">CAR</option>
+                <option value="FIRE_ENGINE">FIRE_ENGINE</option>
+                <option value="PUMPER_TRUCK">PUMPER_TRUCK</option>
+                <option value="WATER_TENDERS">WATER_TENDERS</option>
+                <option value="TURNTABLE_LADDER_TRUCK">TURNTABLE_LADDER_TRUCK</option>
+                <option value="TRUCK">TRUCK</option>
+              </select>
+        </div>
+        <div class="field">
+            <label>Affinity</label>
+            <select name="Affinity" id="Affinity" >
+                <option value="ALL">ALL</option>
+                <option value="WATER">WATER</option>
+                <option value="WATER_WITH_ADDITIVES">WATER_WITH_ADDITIVES</option>
+                <option value="CARBON_DIOXIDE">CARBON_DIOXIDE</option>
+                <option value="POWDER">POWDER</option>
+              </select>
+        </div>
+        <div class="slidecontainer">
+            <label>liquidQuantity</label>
+            <input name="liquidQuantity" type="range" min="1" max="100" value="1" class="slider" id="liquidQuantityRange" onchange="sliderValue()">
+            <label id="outputLiquidQuantityRange" for="liquidQuantityRange"></label>
+        </div>
+        <div class="slidecontainer">
+            <label>fuel</label>
+            <input name="fuel" type="range" min="1" max="100" value="1" class="slider" id="fuelRange" onchange="sliderValue()">
+            <label id="outputFuelRange" for="fuelRange"></label>
+        </div>
+        <div class="slidecontainer">
+            <label>crew Member</label>
+            <input name="crewMember" type="number" min="1" max="100" value="1" class="slider" id="crewMemberRange" >
+        </div>
+        <div class="slidecontainer">
+            <label for="facilityRefIDRange">Caserne d'affectation</label>
+            <select name="facilityRefID" id="facilityRefIDRange" >
+                <option value="81">Caserne n° 81</option>
+              </select>
+        </div>
+        <button class="ui button" type="button">Cancel</button>
+        <button class="ui button" type="button" style="float: right;" onclick="createTruk()">+ OK</button>
+    </form>
+
+    
+
+
+
+    <form action="#" id="DeleteTruck">
+        <div class="field">
+        <select name="selectVehicule" id="selectVehicule"></select>
+        </div>
+
+        <button class="ui button" type="button" style="float: right;" onclick="deleteTruk()">Delete</button>
+    </form>
+</body>
+
+<script>
+
+const CARTYPE = {
+    "CAR" : {
+        "liquidQuantity" : { 
+            "min" : 1,
+            "max" : 10
+        },
+
+        "fuel" : {
+            "min" : 1,
+            "max" : 50,
+        },
+
+        "crewMember" : {
+            "min" : 1,
+            "max" : 2
+        }
+    },
+
+    "FIRE_ENGINE" : {
+        "liquidQuantity" : { 
+            "min" : 1,
+            "max" : 50
+        },
+
+        "fuel" : {
+            "min" : 1,
+            "max" : 60,
+        },
+
+        "crewMember" : {
+            "min" : 1,
+            "max" : 4
+        }
+    }, 
+
+    "PUMPER_TRUCK" : {
+        "liquidQuantity" : { 
+            "min" : 1,
+            "max" : 1000
+        },
+
+        "fuel" : {
+            "min" : 1,
+            "max" : 500
+        },
+
+        "crewMember" : {
+            "min" : 1,
+            "max" : 6
+        }
+    }, 
+
+    "WATER_TENDERS" : {
+        "liquidQuantity" : { 
+            "min" : 1,
+            "max" : 1000
+        },
+
+        "fuel" : {
+            "min" : 1,
+            "max" : 500
+        },
+
+        "crewMember" : {
+            "min" : 1,
+            "max" : 3
+        }
+    }, 
+
+    "TURNTABLE_LADDER_TRUCK" : {
+        "liquidQuantity" : { 
+            "min" : 1,
+            "max" : 1000
+        },
+
+        "fuel" : {
+            "min" : 1,
+            "max" : 500
+        },
+
+        "crewMember" : {
+            "min" : 1,
+            "max" : 6
+        }
+    },
+
+    "TRUCK" : {
+        "liquidQuantity" : { 
+            "min" : 1,
+            "max" : 2000
+        },
+
+        "fuel" : {
+            "min" : 1,
+            "max" : 500
+        },
+
+        "crewMember" : {
+            "min" : 1,
+            "max" : 8
+        }
+    }
+}
+
+
+function filter()
+{
+    let carType = document.getElementById("Type").value;
+    document.getElementById("liquidQuantityRange").setAttribute("max", CARTYPE[carType].liquidQuantity.max)
+    document.getElementById("fuelRange").setAttribute("max", CARTYPE[carType].fuel.max)
+    document.getElementById("crewMemberRange").setAttribute("max", CARTYPE[carType].crewMember.max)
+
+}
+
+function sliderValue()
+{
+    let sliderFuel = document.getElementById("fuelRange");
+    let outputFuel = document.getElementById("outputFuelRange");
+    outputFuel.innerHTML = sliderFuel.value; // Display the default slider value
+
+    let sliderLiquid = document.getElementById("liquidQuantityRange");
+    let outputLiquid = document.getElementById("outputLiquidQuantityRange");
+    outputLiquid.innerHTML = sliderLiquid.value; // Display the default slider value
+}
+
+document.onreadystatechange = function(){
+    filter()
+    sliderValue()
+}
+
+function createTruk(){
+    // create a json from form
+
+    const form = document.getElementById('addTrukForm')
+    console.log(form)
+    var Truk = new Object();
+    Truk.id = 0;
+    Truk.lon = 0.0;
+    Truk.lat = 0.0;
+    Truk.type = form.elements[0].value;
+    Truk.liquidType = form.elements[1].value;
+    Truk.liquidQuantity= parseInt(form.elements[2].value);
+    Truk.fuel = parseInt(form.elements[3].value);
+    Truk.crewMember= parseInt(form.elements[4].value);
+    Truk.facilityRefID= parseInt(form.elements[5].value);
+
+    var jsonString = JSON.stringify(Truk); //all the card infos
+    console.log(jsonString)
+
+
+    // Fetch, POST, UrL/Card, headers : Application/json
+
+    const element = jsonString; //what we want to post
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: jsonString
+    };
+    fetch("http://vps.cpe-sn.fr:8081/vehicle/0eb29fc1-d666-4dd6-9a6e-933f29f87689", requestOptions)
+        .then(response => response.json())
+            .then (response => callback(response))
+            .catch(error => err_callback(error));
+        
+}
+
+function err_callback(error)
+{
+    alert(error);
+}
+function callback(response)
+{
+    console.log(response)
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+const FACILITYID = [81];
+
+fetch("http://vps.cpe-sn.fr:8081/facility")
+    .then(response => response.json())
+        .then(response => calbackFunction(response))
+
+var ListVehiculeId = {
+    "facility" : []
+
+}
+function calbackFunction(response)
+{
+    FACILITYID.forEach( facilityId => 
+    {
+        response.forEach((facility) => 
+        {
+            if (facilityId == facility.id)
+            {
+                ListVehiculeId["facility"].push({"idF" : facilityId , 
+                    "id" :  facility.vehicleIdSet })
+            }
+        })
+    })
+
+    var selectForm = document.getElementById("selectVehicule")
+    ListVehiculeId["facility"].forEach((caserne) =>{
+
+        var optionGroupe = document.createElement('optgroup')
+        optionGroupe.textContent = caserne
+        optionGroupe.value = caserne
+        optionGroupe.setAttribute("label", "Caserne n° " + caserne["idF"])
+        caserne["id"].forEach((vehicule) =>{
+            let option = document.createElement("option")
+            option.setAttribute("value", vehicule)
+            option.innerText = "vehicule" + vehicule
+            optionGroupe.appendChild(option)
+
+        })
+        selectForm.appendChild(optionGroupe)
+
+    })
+    console.log(ListVehiculeId)
+
+}
+
+
+function deleteTruk()
+{
+    let vehiculeDeleteId = document.getElementById("selectVehicule").value;
+
+    const element = jsonString; //what we want to post
+    const requestOptions = {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+        };
+    fetch("http://vps.cpe-sn.fr:8081/vehicle/0eb29fc1-d666-4dd6-9a6e-933f29f87689/"+ vehiculeDeleteId)
+        .then(response => response.json())
+            .then (response => callback(response))
+            .catch(error => err_callback(error));
+}
+</script>
+</html>
