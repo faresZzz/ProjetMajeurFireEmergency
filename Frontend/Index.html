@@ -30,7 +30,48 @@
 				<label for="truck">Camions</label>
 		  </div>
 	  </fieldset>
-  </form>
+  	</form>
+	  <form name="fireFilter" id="fireFilter">
+        <fieldset name="fireTypeFilter">
+            <legend>Types de feu</legend>
+            <div>
+                <input type="checkbox" id="A" value="a" checked>
+                <label>A</label>
+            </div>
+            <div>
+                <input type="checkbox" id="B_gasoline" value="b_gasoline" checked>
+                <label>B_Gasoline</label>
+            </div>
+            <div>
+                <input type="checkbox" id="B_Alcohol" value="b_alcohol" checked>
+                <label>B_Alcohol</label>
+            </div>
+            <div>
+                <input type="checkbox" id="B_Plastics" value="b_plastics" checked>
+                <label>B_Plastics</label>
+            </div>
+            <div>
+                <input type="checkbox" id="C_flammable_gases" value="c_flammable_gases" checked>
+                <label>C_Flammable_Gases</label>
+            </div>
+            <div>
+                <input type="checkbox" id="D_Metals" value="d_metals" checked>
+                <label>D_Metals</label>
+            </div>
+            <div>
+                <input type="checkbox" id="E_Electrics" value="e_electrics" checked>
+                <label>E_Electrics</label>
+            </div>
+            <div>
+                <input type="range" min="0" max="50" class="slider" value="25" name="range" id="range">range
+                <p>Value: <span id="demo"></span></p>
+            </div>
+            <div>
+                <input type="range" min="0" max="50" name="intensity" id="intensity">intensity
+                <p>Value: <span id="demo1"></span></p>
+            </div>
+        </fieldset>
+    </form>
 	<script src="map.js">
 		
 	</script>
