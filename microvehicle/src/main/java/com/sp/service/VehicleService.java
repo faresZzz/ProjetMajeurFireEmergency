@@ -79,17 +79,15 @@ public class VehicleService {
 		v.setLon(lon);
 		v.setLat(lat);
 		
-		System.out.println(v.toString());
-		
 		try {
 			HttpEntity<Vehicle> request = new HttpEntity<Vehicle>(v);
 			rest_template.exchange(this.URL_PUT_VEHICULE+id.toString(), 
-					HttpMethod.POST, 
+					HttpMethod.PUT, 
 					request, 
-					Vehicle.class);
+					Boolean.class);
 		}
 		catch( HttpClientErrorException httpClientErrorException) {
-			S httpClientErrorException.getResponseBodyAsString();
+			System.out.println(httpClientErrorException.getResponseBodyAsString()); 
 		}
 		
 		
