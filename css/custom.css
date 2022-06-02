@@ -1,0 +1,66 @@
+html{
+    font-size: 15px
+}
+
+body{
+    font-size: 15px
+}
+
+.limitText{
+    text-overflow:ellipsis;
+}
+
+.ui.messageLight{
+    background: #ffffff;
+    padding: 1em 1.5em;
+    line-height: 1.4285em;
+    border-radius: .28571429rem;
+    -webkit-box-shadow: 0 0 0 1px rgba(252, 252, 252, 0.22) inset, 0 0 0 0 transparent;
+    box-shadow: 0 0 0 1px rgba(252, 252, 252, 0.22) inset, 0 0 0 0 transparent;
+}
+
+.overflowHiden{
+    overflow:  auto;
+}
+
+
+
+header {
+    width: 100%;
+    margin-bottom: 2%;
+    background: red;
+    padding: 2%;
+  }
+  
+aside_up {
+    clear: left;
+    float: left;
+    width: 28%;
+    max-height: 80%;
+    margin-right: 2%;
+    padding: 2%;
+    background: rgb(195, 195, 195);
+}
+
+aside_down {
+    clear: left;
+    float: left;
+    width: 28%;
+    max-height: 80%;
+    margin-right: 2%;
+    padding: 2%;
+    background: rgb(195, 195, 195);
+    }
+
+main {
+    float: left;
+    width: 68%;
+    height: 80%;
+    margin-left: 2%;
+    padding: 2%;
+    background: green;
+}
+
+.map_image {
+    height: 100%;
+}
