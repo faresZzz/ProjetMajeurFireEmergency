@@ -12,6 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import com.sp.model.Vehicle;
 import com.sp.repository.VehicleRepository;
@@ -25,29 +26,47 @@ public class VehicleService {
 	
 	private static RestTemplate rest_template = new RestTemplate();
 	private String URL_GET_VEHICLE = "http://vps.cpe-sn.fr:8081/vehicle";
-	private String
-	
+	private String URL_PUT_VEHICULE =  "http://vps.cpe-sn.fr:8081/vehicle/0eb29fc1-d666-4dd6-9a6e-933f29f87689/";
 	private Collection<Integer> list_id = new LinkedHashSet<Integer>();
-	
+
 	/*
 	 * Methodes
 	 * */
 	
-	public void initVehicles() {
+	/**
+	 *  Permet d'initialiser les vehicules
+	 * */
+	public void initVehicules() {
 		// TODO : Chnager la methode quand on pourra obtenir la liste automatiquement
-		this.list_id.add(164);
+		this.list_id.add(250);
 		this.list_id.add(151);
 		
-		HashMap<Integer,Vehicle> hash_map = this.getHashMap((ArrayList)this.getHTTPVehicles());
+		this.updateVehicles();
+	}
+	
+	/**
+	 * Permet de mettre a jour la db de vehicules
+	 * */
+	public void updateVehicles() {
 		
+		/* Permet de recuperer tout les vehicules*/
+		HashMap<Integer,Vehicle> hash_map = this.getHashMap((ArrayList<Vehicle>)this.getHTTPVehicles());
+		
+		/* Pour les id de camions dans la liste de notre equipe*/
 		for (Integer id:this.list_id) {
-			
+			/* Si le hashmap a un camion qui contient cet id, le sauvegarder*/
 			if(hash_map.containsKey(id.hashCode())) {
 				vRepository.save(hash_map.get(id.hashCode()));
 			}
 		}
 	}
 	
+	/**
+	 * show database
+	 * */
+	public String printVehicules() {
+		return vRepository.findAll().toString();
+	}
 	
 	/**
 	 * Permet de deplacer un vehicule d'un point A à un point B
@@ -55,13 +74,27 @@ public class VehicleService {
 	public boolean moveVehicle(Integer id, Double lon, Double lat) {
 		Vehicle v = vRepository.findById(id).get();
 		
+		//if(v==null) {return false;}
+		
 		v.setLon(lon);
 		v.setLat(lat);
 		
+		System.out.println(v.toString());
 		
-		RestTemplate restTemplate = new RestTemplate();
-		HttpEntity<Vehicle> request = new HttpEntity<Vehicle>(v));
-		restTemplate.exchange(fooResourceUrl, HttpMethod.POST, request, Foo.class);
+		try {
+			HttpEntity<Vehicle> request = new HttpEntity<Vehicle>(v);
+			rest_template.exchange(this.URL_PUT_VEHICULE+id.toString(), 
+					HttpMethod.POST, 
+					request, 
+					Vehicle.class);
+		}
+		catch( HttpClientErrorException httpClientErrorException) {
+			S httpClientErrorException.getResponseBodyAsString();
+		}
+		
+		
+		
+		this.updateVehicles();
 		
 		return true;
 	}
