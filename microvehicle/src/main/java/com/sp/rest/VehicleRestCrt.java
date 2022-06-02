@@ -8,16 +8,16 @@ import com.sp.service.FireService;
 
 
 @RestController
-public class FireRestCrt {
+public class VehicleRestCrt {
 	@Autowired
-	FireService fService;
+	VehicleService vService;
 	
 	/**
 	 * 
 	 * */
 	@RequestMapping(method = RequestMethod.GET, value = "/start")
 	public void tryFire() {
-		System.out.println(fService.getAlldBFires());
+		System.out.println(vService.getAlldBFires());
 	}
 	
 	

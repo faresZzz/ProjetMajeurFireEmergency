@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page de creation de camion</title>
+    <title>Page de création de camion</title>
 </head>
 <body>
-    <form class="ui form" action="./addData" method="GET" id="addTrukForm">
+    <form class="ui form" action="#" method="GET" id="addTrukForm">
         <h3 class="ui dividing header">Ajouter un camion</h3>
         
         <!-- <div class="field">
@@ -58,13 +58,23 @@
         <div class="slidecontainer">
             <label for="facilityRefIDRange">Caserne d'affectation</label>
             <select name="facilityRefID" id="facilityRefIDRange" >
-                <option value="87">Caserne n° 87</option>
+                <option value="81">Caserne n° 81</option>
               </select>
         </div>
         <button class="ui button" type="button">Cancel</button>
         <button class="ui button" type="button" style="float: right;" onclick="createTruk()">+ OK</button>
     </form>
 
+    
+
+
+
+    <form action="#" id="DeleteTruck">
+        <div class="field">
+        <select name="selectVehicule" id="selectVehicule"></select>
+        </div>
+
+        <button class="ui button" type="button" style="float: right;" onclick="deleteTruk()">Delete</button>
     </form>
 </body>
 
@@ -174,6 +184,7 @@ const CARTYPE = {
     }
 }
 
+
 function filter()
 {
     let carType = document.getElementById("Type").value;
@@ -238,9 +249,72 @@ function err_callback(error)
 {
     alert(error);
 }
-function callback(reponse)
+function callback(response)
 {
-    console.log(reponse)
+    console.log(response)
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+const FACILITYID = [81];
+
+fetch("http://vps.cpe-sn.fr:8081/facility")
+    .then(response => response.json())
+        .then(response => calbackFunction(response))
+
+var ListVehiculeId = {
+    "facility" : []
+
+}
+function calbackFunction(response)
+{
+    FACILITYID.forEach( facilityId => 
+    {
+        response.forEach((facility) => 
+        {
+            if (facilityId == facility.id)
+            {
+                ListVehiculeId["facility"].push({"idF" : facilityId , 
+                    "id" :  facility.vehicleIdSet })
+            }
+        })
+    })
+
+    var selectForm = document.getElementById("selectVehicule")
+    ListVehiculeId["facility"].forEach((caserne) =>{
+
+        var optionGroupe = document.createElement('optgroup')
+        optionGroupe.textContent = caserne
+        optionGroupe.value = caserne
+        optionGroupe.setAttribute("label", "Caserne n° " + caserne["idF"])
+        caserne["id"].forEach((vehicule) =>{
+            let option = document.createElement("option")
+            option.setAttribute("value", vehicule)
+            option.innerText = "vehicule" + vehicule
+            optionGroupe.appendChild(option)
+
+        })
+        selectForm.appendChild(optionGroupe)
+
+    })
+    console.log(ListVehiculeId)
+
+}
+
+
+function deleteTruk()
+{
+    let vehiculeDeleteId = document.getElementById("selectVehicule").value;
+
+    const element = jsonString; //what we want to post
+    const requestOptions = {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+        };
+    fetch("http://vps.cpe-sn.fr:8081/vehicle/0eb29fc1-d666-4dd6-9a6e-933f29f87689/"+ vehiculeDeleteId)
+        .then(response => response.json())
+            .then (response => callback(response))
+            .catch(error => err_callback(error));
 }
 </script>
 </html>
