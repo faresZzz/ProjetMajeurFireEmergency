@@ -7,17 +7,54 @@ var Facility = L.layerGroup().addTo(map);
 var Fire = L.layerGroup().addTo(map);
 var Truck = L.layerGroup().addTo(map);
 
+var B_Gasoline = L.layerGroup().addTo(map);
+var C_Flammable_Gases = L.layerGroup().addTo(map);
+var A = L.layerGroup().addTo(map);
+var B_Alcohol = L.layerGroup().addTo(map);
+var B_Plastics = L.layerGroup().addTo(map);
+var D_Metals = L.layerGroup().addTo(map);
+var E_Electrics = L.layerGroup().addTo(map);
+
 var FireIcon = L.icon({ iconUrl: 'Fire.png', iconSize: [35, 45] });
 var FacilityIcon = L.icon({ iconUrl: 'Facility.png', iconSize: [50, 50] });
-var TruckIcon = L.icon({ iconUrl: 'teuck.png', iconSize: [35, 30] });
+var TruckIcon = L.icon({ iconUrl: 'teuck.png', iconSize: [35, 25] });
 
 
+
+//----------------------------------------------------------------
+// CheckBox management
 var facilityCheckbox = document.querySelector('input[value="facility"]');
 var fireCheckbox = document.querySelector('input[value="fire"]');
 var truckCheckbox = document.querySelector('input[value="truck"]');
+var b_gasoline = document.querySelector('input[value="b_gasoline"]');
+var c_flammable_gases = document.querySelector('input[value="c_flammable_gases"]')
+var a = document.querySelector('input[value="a"]')
+var b_alcohol = document.querySelector('input[value="b_alcohol"]');
+var b_plastics = document.querySelector('input[value="b_plastics"]');
+var d_metals = document.querySelector('input[value="d_metals"]');
+var e_electrics = document.querySelector('input[value="e_electrics"]');
+var range = document.querySelector('input[value="range"]');
+var intensity = document.querySelector('input[value="intensity"]');
 
-var checkeboxList = [[facilityCheckbox,Facility],[truckCheckbox,Truck],[fireCheckbox,Fire]]
+var checkeboxList = [[facilityCheckbox,Facility],[truckCheckbox,Truck],[fireCheckbox,Fire],[b_gasoline, B_Gasoline],
+    [c_flammable_gases, C_Flammable_Gases],[a, A],[b_alcohol, B_Alcohol],[b_plastics, B_Plastics],[d_metals, D_Metals],[e_electrics, E_Electrics]];
 
+
+
+// for (let index = 0; index < fireTypeArray.length; index++) {
+//     const element = fireTypeArray[index];
+//     const associatedElement = associatedFireTypeArray[index];
+//     console.log(element);
+//     element.onchange = function () {
+//         console.log("changement");
+//         if (element.checked) {
+//             map.addLayer(associatedElement);
+//         }
+//         else {
+//             map.removeLayer(associatedElement);
+//         }
+//     }
+// }
 
 checkeboxList.forEach(checkbox => {
     checkbox[0].onchange = function () {
@@ -29,43 +66,21 @@ checkeboxList.forEach(checkbox => {
     }
 }
 });
-
-// facilityCheckbox.onchange = function () {
-//     if (facilityCheckbox.checked) {
-//         map.addLayer(Facility);
-//     }
-//     else {
-//         map.removeLayer(Facility);
-//     }
-// };
-
-
-// fireCheckbox.onchange = function () {
-//     if (fireCheckbox.checked) {
-//         map.addLayer(Fire);
-//     }
-//     else {
-//         map.removeLayer(Fire);
-//     }
-// };
-
-
-// truckCheckbox.onchange = function () {
-//     if (truckCheckbox.checked) {
-//         map.addLayer(Truck);
-
-//     }
-//     else {
-//         map.removeLayer(Truck);
-
-//     }
-// };
+//----------------------------------------------------------------
 
 
 function getFire() {
     const url = 'http://vps.cpe-sn.fr:8081/fire'
-
-    const element = document.querySelector('#post-request .article-id');
+    var fireType = {
+        'B_Gasoline': B_Gasoline,
+        'C_Flammable_Gases': C_Flammable_Gases,
+        'A': A,
+        'B_Alcohol': B_Alcohol,
+        "B_Plastics": B_Plastics,
+        'D_Metals': D_Metals,
+        'E_Electrics': E_Electrics,
+    }
+    //const element = document.querySelector('#post-request .article-id');
     // const requestOptions = {
     // method: 'GET',
     // headers: { 'Content-Type': 'application/json' },
@@ -75,8 +90,9 @@ function getFire() {
         .then(response => response.json())
         .then(data => {
             data.forEach(element => {
-
-                L.marker([element.lat, element.lon], { icon: FireIcon }).addTo(Fire).bindPopup("<h2> Feu n°" + element.id + "</h2>" + "<ul>" +
+                console .log(fireType[element.type])
+                
+                L.marker([element.lat, element.lon], { icon: FireIcon }).addTo(fireType[element.type]).addTo(Fire).bindPopup("<h2> Feu n°" + element.id + "</h2>" + "<ul>" +
                     "<li> Type : " + element.type + "</li>" + "<li> Intensity : " + element.intensity + "</li>" +
                     "<li> Range : " + element.range + "</li>" + "</ul>");
             }
