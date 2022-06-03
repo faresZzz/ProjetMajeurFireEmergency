@@ -12,17 +12,12 @@ import org.springframework.web.client.RestTemplate;
 
 import com.project.model.dto.FireDto;
 import com.project.model.dto.VehicleDto;
-import com.sp.model.Facility;
-import com.sp.repository.FacilityRepository;
 // 164 151
 
 import net.bytebuddy.asm.Advice.This;
 
 @Service
 public class FacilityService {
-	
-	@Autowired
-	FacilityRepository fRepository;
 	
 	private static RestTemplate rest_template = new RestTemplate();
 	
@@ -35,9 +30,9 @@ public class FacilityService {
 		add(249);
 	}};
 	
-	private List<VehicleDto> listVehicle ;
+	private List<VehicleDto> listVehicle = new ArrayList<VehicleDto>();
 	
-	private List<Integer> listVehicleEnInterventions ;
+	private List<Integer> listVehicleEnInterventions = new ArrayList<Integer>() ;
 	
 	
 	/*
@@ -73,13 +68,6 @@ public class FacilityService {
 //		}
 	}
 	
-	/**
-	 * show database
-	 * */
-	public String printFacilities() {
-		return fRepository.findAll().toString();
-	}
-	
     
 	public List<VehicleDto> getHTTPVehicle(String facilityRefID) {
 		
@@ -101,9 +89,10 @@ public class FacilityService {
 		// TODO Auto-generated method stub
 		boolean ret = false;
 		for (VehicleDto vehicle : listVehicle) {
-			if (!listVehicleEnInterventions.contains(vehicle.getId())) {
+			
+			if ( !listVehicleEnInterventions.contains(vehicle.getId())) {
 				listVehicleEnInterventions.add(vehicle.getId());
-				rest_template.postForObject(URL_POST_MOVE_VEHICLE, Fire, null);
+				rest_template.postForObject(URL_POST_MOVE_VEHICLE, Fire, FireDto.class);
 				ret = true; 
 				break;
 			}
@@ -114,7 +103,7 @@ public class FacilityService {
 	
 	/**
 	 * Permet de convertir un array en hashmap en utilisant
-	 * */
+	 
 	public HashMap<Integer,Facility> getHashMap(ArrayList<Facility> facilities){
 		HashMap<Integer,Facility> ret = new HashMap<Integer,Facility>();
 		
@@ -124,6 +113,7 @@ public class FacilityService {
 		
 		return ret;
 	}
+	* */
 
 	
 

@@ -110,7 +110,7 @@ function getFire() {
         .then(response => response.json())
         .then(data => {
             data.forEach(element => {
-                console.log(element)
+               
                 // console .log(fireType[element.type])
                 
                 L.marker([element.lat, element.lon], { icon: FireIcon }).addTo(fireType[element.type]).addTo(Fire).bindPopup("<h2> Feu n°" + element.id + "</h2>" + "<ul>" +
@@ -180,7 +180,7 @@ function main() {
     getFire();
     getTruck();
     console.log('Done')
-    L.marker.clearLayers();
+    //L.marker.clearLayers();
     setTimeout(main, 1000); // try again in 10 seconds
 }
 

@@ -23,8 +23,12 @@ public class FacilityRestCrt {
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/gererFire/{idCaserne}")
 	public boolean gererFeu(@RequestBody FireDto Fire, @PathVariable String idCaserne) {
+		System.out.println(Fire);
+		System.out.println(idCaserne);
 		List<VehicleDto> listVehicle  =  fService.getHTTPVehicle(idCaserne);
+		System.out.println(listVehicle);
 		return fService.envoyerCamion(listVehicle,Fire);
+		
 		
 	}
 	
