@@ -7,6 +7,8 @@ var Facility = L.layerGroup().addTo(map);
 var Fire = L.layerGroup().addTo(map);
 var Truck = L.layerGroup().addTo(map);
 
+var All_Fires = L.layerGroup().addTo(map);
+
 var B_Gasoline = L.layerGroup().addTo(map);
 var C_Flammable_Gases = L.layerGroup().addTo(map);
 var A = L.layerGroup().addTo(map);
