@@ -2,5 +2,5 @@
 */.metadata/
 *.metadata
 */.settings/
-*.classpath
+**/.classpath
 *.project

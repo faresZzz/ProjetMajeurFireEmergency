@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.sp.model.dto.FacilityDto;
-import com.sp.model.dto.FireDto;
+import com.project.model.dto.FacilityDto;
+import com.project.model.dto.FireDto;
+
+
 // 164 151
 
 @Service

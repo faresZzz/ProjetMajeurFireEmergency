@@ -7,6 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.project.model.dto.LiquidType;
+import com.project.model.dto.VehicleType;
+
 @Entity
 @Table(name="VEHICLE")
 public class Vehicle {
