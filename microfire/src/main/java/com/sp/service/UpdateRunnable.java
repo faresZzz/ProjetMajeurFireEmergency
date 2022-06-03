@@ -130,7 +130,6 @@ public class UpdateRunnable implements Runnable {
 		ArrayList<Fire> fireList = responseEntity.getBody();
 		
 		return fireList;
-		
 	}
 	
 	/**
@@ -148,7 +147,5 @@ public class UpdateRunnable implements Runnable {
 			rest_template.postForObject(URL_POST_NEWFIRE, convertToDto(f), Boolean.class);
 		} ;
 	}
-
-	
 
 }
