@@ -98,7 +98,7 @@ function getFire() {
         'B_Alcohol': B_Alcohol,
         "B_Plastics": B_Plastics,
         'D_Metals': D_Metals,
-        'E_Electrics': E_Electrics,
+        'E_Electric': E_Electrics,
     }
     //const element = document.querySelector('#post-request .article-id');
     // const requestOptions = {
@@ -110,7 +110,8 @@ function getFire() {
         .then(response => response.json())
         .then(data => {
             data.forEach(element => {
-                console .log(fireType[element.type])
+                console.log(element)
+                // console .log(fireType[element.type])
                 
                 L.marker([element.lat, element.lon], { icon: FireIcon }).addTo(fireType[element.type]).addTo(Fire).bindPopup("<h2> Feu n°" + element.id + "</h2>" + "<ul>" +
                     "<li> Type : " + element.type + "</li>" + "<li> Intensity : " + element.intensity + "</li>" +
@@ -180,7 +181,7 @@ function main() {
     getTruck();
     console.log('Done')
     L.marker.clearLayers();
-    setTimeout(main, 10000); // try again in 10 seconds
+    setTimeout(main, 1000); // try again in 10 seconds
 }
 
 main();
