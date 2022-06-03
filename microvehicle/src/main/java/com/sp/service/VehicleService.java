@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -69,7 +68,7 @@ public class VehicleService {
 	}
 	
 	/**
-	 * Permet de deplacer un vehicule d'un point A à un point B
+	 * Permet de deplacer un vehicule d'un point A ï¿½ un point B
 	 * */
 	public boolean moveVehicle(Integer id, Double lon, Double lat) {
 		Vehicle v = vRepository.findById(id).get();

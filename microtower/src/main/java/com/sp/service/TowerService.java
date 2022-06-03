@@ -1,9 +1,14 @@
 package com.sp.service;
 
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -15,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
 import com.sp.model.dto.FacilityDto;
 import com.sp.model.dto.FireDto;
 // 164 151
@@ -24,8 +30,9 @@ public class TowerService {
 	
 	@Autowired
 	private static RestTemplate rest_template = new RestTemplate();
-	Set<FireDto> fire_set;
-	Set<FacilityDto> facility_set;
+	List<FireDto> fire_list;
+	List<FacilityDto> facility_list;
+	Map<Integer,Integer> managed_fire_set;
 	
 	// URLs
 	private String URL_PUT_VEHICULE = "localhost:8082/manageFire/";
@@ -36,18 +43,37 @@ public class TowerService {
 	 * */
 	
 	/**
+	 * 
+	 * */
+	public void initTower() {
+		managed_fire_set = new HashMap<>();
+	}
+	
+	/**
 	 * Permet de recuperer les facility
 	 * */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void getFacilities() {
-		rest_template.getForObject(URL_GET_FACILITIES,  FacilityDTO.class);
+		FacilityDto[] resp = rest_template.getForObject(URL_GET_FACILITIES,  FacilityDto[].class);
+		facility_list = Arrays.asList(resp);
+		
 	}
+	
+	/**
+	 * Cas ou un feu est finit
+	 * */
+	public void recieveEndedFire(Integer fire_id) {
+		
+	}
+	
 	
 	/**
 	 * Permet d'envoyer un nouveau feu a la caserne voulu
 	 * */
-	public void recieveNewFire(FireDTO fi) {
+	public void recieveNewFire(FireDto fi) {
 		FacilityDto fa = this.getClosestFacility(fi);
 		this.sendFire(fi, fa);
+		managed_fire_set.put(fi.getId(), fa.getId());
 	}
 	
 	/**
@@ -63,7 +89,7 @@ public class TowerService {
 	private FacilityDto getClosestFacility(FireDto fi) {
 		float min_dist = 1000000000000f;
 		FacilityDto ret = null;
-		for (FacilityDto fa : facility_set) {
+		for (FacilityDto fa : facility_list) {
 			float dist = this.calculateDistance(fa, fi);
 			if(dist < min_dist) {
 				min_dist = dist;
