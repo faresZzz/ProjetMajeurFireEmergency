@@ -16,7 +16,6 @@ import org.springframework.web.client.RestTemplate;
 import com.project.model.dto.FacilityDto;
 import com.project.model.dto.FireDto;
 
-
 // 164 151
 
 @Service
@@ -25,13 +24,13 @@ public class TowerService {
 	@Autowired
 	private static RestTemplate rest_template = new RestTemplate();
 	List<FireDto> fire_list;
-	List<FacilityDto> facility_list;
+	List<FacilityDto> facility_list = this.getFacilities();
 	
 	Map<Integer,Integer> managed_fire_set = new HashMap<>();
 	
 	// URLs
-	private String URL_VEHICULE = "localhost:8082/";
-	private String URL_FACILITY = "localhost:8081/";
+	private String URL_VEHICULE = "http://localhost:8084/";
+	private String URL_FACILITY = "http://localhost:8083/";
 	
 	private String URL_PUT_VEHICULE = URL_VEHICULE+"manageFire/";
 	private String URL_END_VEHICULE = URL_VEHICULE+"endedFire/";
@@ -44,14 +43,14 @@ public class TowerService {
 	
 	/**
 	 * Permet de recuperer les facility
+	 * @return 
 	 * */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void getFacilities() {
+	public List<FacilityDto> getFacilities() {
 		/* Fais la requete pour obtenir une liste de casernes*/
-		FacilityDto[] resp = rest_template.getForObject(URL_GET_FACILITIES,  FacilityDto[].class);
+		FacilityDto[] resp = rest_template.getForObject("http://localhost:8083/getFacilities",  FacilityDto[].class);
 		
 		/* Change cet objet Array en Liste */
-		facility_list = Arrays.asList(resp);
+		return Arrays.asList(resp);
 		
 	}
 	
@@ -64,7 +63,6 @@ public class TowerService {
 			
 		}
 	}
-	
 	
 	/**
 	 * Permet d'envoyer un nouveau feu a la caserne voulu
@@ -120,5 +118,5 @@ public class TowerService {
 		}
 		return ret;
 	}
-
+	
 }
