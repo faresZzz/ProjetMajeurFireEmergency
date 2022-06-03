@@ -22,10 +22,7 @@
     <aside_left>
         <form>
             <fieldset>
-                <div>
-                        <input type="checkbox" id="fire" name="interest" value="fire" checked>
-                        <label for="fire">Feux</label>
-                </div>
+                
                 <div>
                         <input type="checkbox" id="facility" name="interest" value="facility" checked>
                         <label for="facility">Casernes</label>
@@ -38,18 +35,22 @@
         </form>
         <form name="fireFilter" id="fireFilter">
             <fieldset name="fireTypeFilter">
-                <legend>Types de feu</legend>
+                <legend>Types de feux</legend>
                 <div>
-                    <input type="checkbox" onclick="toggle(this)" />Feux<br/>
+                    <input type="checkbox" id="fire" name="interest" value="fire" onclick="master_checkbox(this)" checked>
+                    <label for="fire">Feux</label>
                 </div>
-                <script language="JavaScript">
+                <!-- <div>
+                    <input type="checkbox" id="All_Fires" onclick="toggle(this)" />Feux<br/>
+                </div> -->
+                <!-- <script language="JavaScript">
                     function toggle(source) {
                         checkboxes = document.getElementsByName('feu');
                         for(var i=0, n=checkboxes.length;i<n;i++) {
                             checkboxes[i].checked = source.checked;
                         }
                     }
-                </script>
+                </script> -->
                 <div class="fire_checkbox">
                     <input type="checkbox" name="feu" id="A" value="a" checked>
                     <label>A</label>
@@ -159,10 +160,6 @@
         </fieldset>
         </form>
     </aside_left>
-
-    <footer>
-        
-    </footer>
 
 	<script src="map.js"></script>
 

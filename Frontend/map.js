@@ -7,6 +7,8 @@ var Facility = L.layerGroup().addTo(map);
 var Fire = L.layerGroup().addTo(map);
 var Truck = L.layerGroup().addTo(map);
 
+var All_Fires = L.layerGroup().addTo(map);
+
 var B_Gasoline = L.layerGroup().addTo(map);
 var C_Flammable_Gases = L.layerGroup().addTo(map);
 var A = L.layerGroup().addTo(map);
@@ -36,9 +38,10 @@ var e_electrics = document.querySelector('input[value="e_electrics"]');
 var range = document.querySelector('input[value="range"]');
 var intensity = document.querySelector('input[value="intensity"]');
 
-var checkeboxList = [[facilityCheckbox,Facility],[truckCheckbox,Truck],[fireCheckbox,Fire],[b_gasoline, B_Gasoline],
+var checkboxList = [[facilityCheckbox,Facility],[truckCheckbox,Truck],[fireCheckbox,Fire],[b_gasoline, B_Gasoline],
     [c_flammable_gases, C_Flammable_Gases],[a, A],[b_alcohol, B_Alcohol],[b_plastics, B_Plastics],[d_metals, D_Metals],[e_electrics, E_Electrics]];
 
+var fireTypeCheckboxList = [[b_gasoline, B_Gasoline],[c_flammable_gases, C_Flammable_Gases],[a, A],[b_alcohol, B_Alcohol],[b_plastics, B_Plastics],[d_metals, D_Metals],[e_electrics, E_Electrics]];
 
 
 // for (let index = 0; index < fireTypeArray.length; index++) {
@@ -56,7 +59,7 @@ var checkeboxList = [[facilityCheckbox,Facility],[truckCheckbox,Truck],[fireChec
 //     }
 // }
 
-checkeboxList.forEach(checkbox => {
+checkboxList.forEach(checkbox => {
     checkbox[0].onchange = function () {
     if (checkbox[0].checked) {
         map.addLayer(checkbox[1]);
@@ -66,6 +69,23 @@ checkeboxList.forEach(checkbox => {
     }
 }
 });
+
+function master_checkbox(source){
+    fireTypeCheckboxList.forEach(checkbox =>{
+        if (source.checked) {
+            checkbox[0].disabled=false;
+            checkbox[0].checked=true;
+            map.addLayer(checkbox[1]);
+        }
+        else {
+            checkbox[0].disabled=true;
+            checkbox[0].checked=true;
+            map.removeLayer(checkbox[1]);
+        }
+        
+    })
+}
+
 //----------------------------------------------------------------
 
 
@@ -154,11 +174,12 @@ function getTruck() {
 }
 
 function main() {
-    L.marker.remove;
+    // L.marker.remove;
     getFacility();
     getFire();
     getTruck();
     console.log('Done')
+    L.marker.clearLayers();
     setTimeout(main, 10000); // try again in 10 seconds
 }
 

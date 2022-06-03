@@ -1,9 +1,11 @@
 html{
-    font-size: 15px
+    font-size: 15px;
+    height: 100%;
 }
 
 body{
-    font-size: 15px
+    font-size: 15px;
+    height: 100%;
 }
 
 .limitText{
@@ -39,18 +41,9 @@ aside_left {
     height: 100%;
     /* margin-right: 2%; */
     /* padding: 2%; */
+    font-family: Tahoma, Verdana, Segoe, sans-serif;
     background: rgb(195, 195, 195);
 }
-
-footer {
-    clear: left;
-    float:left;
-    width: 100%;
-    max-height: 20%;
-    /* margin-right: 2%; */
-    /* padding: 2%; */
-    background: rgb(195, 195, 195);
-    }
 
 main {
     float: right;
@@ -62,7 +55,7 @@ main {
 }
 
 #map {
-    height: 600px;
+    height:100%;
     width: 100%;
 }
 
