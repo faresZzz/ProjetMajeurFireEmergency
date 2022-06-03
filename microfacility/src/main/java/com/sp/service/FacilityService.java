@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,9 @@ public class FacilityService {
 	private String URL_GET_VEHICLE = "http://vps.cpe-sn.fr:8081/vehicle";
 	private String URL_PUT_VEHICULE =  "http://vps.cpe-sn.fr:8081/vehicle/0eb29fc1-d666-4dd6-9a6e-933f29f87689/";
 	private Collection<Integer> list_id = new LinkedHashSet<Integer>();
-
+	private List<Integer> listFacilityRefID = new ArrayList<Integer>();
+	
+	private List<VehicleDTO> listVehicle;
 	/*
 	 * Methodes
 	 * */
@@ -37,10 +40,10 @@ public class FacilityService {
 	/**
 	 *  Permet d'initialiser les vehicules
 	 * */
-	public void initFacility() {
+	public void initVehicle() {
 		// TODO : Chnager la methode quand on pourra obtenir la liste automatiquement
-		this.list_id.add(250);
-		this.list_id.add(151);
+		this.listFacilityRefID.add(249);
+	
 		
 		this.updateFacilities();
 	}
@@ -50,7 +53,7 @@ public class FacilityService {
 	 * */
 	public void updateFacilities() {
 		
-		/* Permet de recuperer tout les vehicules*/
+		/* Permet de recuperer tout les facility*/
 		HashMap<Integer,Facility> hash_map = this.getHashMap((ArrayList<Facility>)this.getHTTPFacilities());
 		
 		/* Pour les id de camions dans la liste de notre equipe*/
@@ -70,38 +73,20 @@ public class FacilityService {
 	}
 	
     
-	/**
-	 * Saves the fire to the database
-	 * */
-	private void addFacility(Facility f) {
-		fRepository.save(f); // Sauvegarde du user dans la db	
-	}
-	
-	private void addAllFacility(Collection<Facility> vlist) {
-		fRepository.saveAll(vlist);
-	}
+}
 	
 	
-	public Iterable<Facility> getAlldBFires() {
-		Iterable<Facility> vOpt = fRepository.findAll();
-		return vOpt;
-	}
-	
-	public Collection<Facility> getHTTPFacilities() {
+	public Collection<Facility> getHTTPVehicle() {
 		
 		/**
 		 * Permet d'appeller via un get http une liste en json convertie en liste d'objet java
 		 * */
-		ResponseEntity<ArrayList<Facility>> responseEntity = 
-				  rest_template.exchange(
-					URL_GET_VEHICLE,
-				    HttpMethod.GET,
-				    null,
-				    new ParameterizedTypeReference<ArrayList<Facility>>() {}
-				  );
-		
+		VehicleDTO[] Vehicle = rest_template.getForObject(URL_GET_VEHICLE, VehicleDTO[].class);
+	
 		ArrayList<Facility> fList = responseEntity.getBody();
-		
+		for (Facility facility : fList) {
+			
+		}
 		
 		return fList;
 	}

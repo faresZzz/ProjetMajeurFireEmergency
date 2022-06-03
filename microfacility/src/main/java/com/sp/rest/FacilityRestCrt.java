@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sp.service.FacilityService;
-import com.sp.service.VehicleService;
 
 
 @RestController
@@ -15,20 +14,16 @@ public class FacilityRestCrt {
 	@Autowired
 	FacilityService fService;
 	
-	/**
-	 * 
-	 * */
-	@RequestMapping(method = RequestMethod.GET, value = "/move")
-	public void move() {
-		fService.moveFacility(250, 50.0, 50.0);
-		System.out.println(fService.printFacilities());
-	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/start")
-	public void start() {
+	@RequestMapping(method = RequestMethod.POST, value = "/feu")
+	public void gererFeu(@RequestBody FeuDTO feu) {
 		fService.initFacility();
 		System.out.println(fService.printFacilities()) ;
 	}
+	 @RequestMapping(method=RequestMethod.POST,value="/Card")
+     public void addCard(@RequestBody Card Card) {
+         cService.addCard(Card);
+     }
 	
 	
 }
