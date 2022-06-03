@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import com.sp.model.Vehicle;
 import com.sp.model.dto.FacilityDto;
 import com.sp.model.dto.FireDto;
 // 164 151
@@ -30,14 +28,26 @@ public class TowerService {
 	Set<FacilityDto> facility_set;
 	
 	// URLs
-	private String URL_PUT_VEHICULE = "localhost:8082/manageFire/"
+	private String URL_PUT_VEHICULE = "localhost:8082/manageFire/";
+	private String URL_GET_FACILITIES = "localhost:8081/getFacilities";
 
 	/*
 	 * Methodes
 	 * */
 	
-	public void recieveFires(Set<FireDto> fires) {
-		
+	/**
+	 * Permet de recuperer les facility
+	 * */
+	public void getFacilities() {
+		rest_template.getForObject(URL_GET_FACILITIES,  FacilityDTO.class);
+	}
+	
+	/**
+	 * Permet d'envoyer un nouveau feu a la caserne voulu
+	 * */
+	public void recieveNewFire(FireDTO fi) {
+		FacilityDto fa = this.getClosestFacility(fi);
+		this.sendFire(fi, fa);
 	}
 	
 	/**
@@ -68,19 +78,21 @@ public class TowerService {
 	 * */
 	
 	public Boolean sendFire(FireDto fi, FacilityDto fa) {
+		Boolean ret = false;
 		try {
 			
-			HttpEntity<FireDto> request = new HttpEntity<FireDto>(f);
-			
+			HttpEntity<FireDto> request = new HttpEntity<FireDto>(fi);
 			rest_template.exchange(
 					this.URL_PUT_VEHICULE+fi.getId().toString(), 
 					HttpMethod.POST, 
 					request, 
 					Boolean.class);
+			ret = true;
 		}
 		catch( HttpClientErrorException httpClientErrorException) {
 			System.out.println(httpClientErrorException.getResponseBodyAsString()); 
 		}
+		return ret;
 	}
 
 }
