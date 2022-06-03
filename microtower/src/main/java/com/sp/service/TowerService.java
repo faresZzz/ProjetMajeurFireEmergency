@@ -29,12 +29,12 @@ public class TowerService {
 	Map<Integer,Integer> managed_fire_set = new HashMap<>();
 	
 	// URLs
-	private String URL_VEHICULE = "http://localhost:8084/";
+	private static String URL_DB = "http://vps.cpe-sn.fr:8081/";
 	private String URL_FACILITY = "http://localhost:8083/";
 	
-	private String URL_PUT_VEHICULE = URL_VEHICULE+"manageFire/";
-	private String URL_END_VEHICULE = URL_VEHICULE+"endedFire/";
-	private String URL_GET_FACILITIES = URL_FACILITY+"getFacilities";
+	private String URL_PUT_FIRE_FACILITY = URL_FACILITY+"manageFire/";
+	private String URL_END_FIRE_FACILITY = URL_FACILITY+"endedFire/";
+	private String URL_GET_FACILITIES = URL_DB+"facility";
 	
 
 	/*
@@ -47,7 +47,7 @@ public class TowerService {
 	 * */
 	public List<FacilityDto> getFacilities() {
 		/* Fais la requete pour obtenir une liste de casernes*/
-		FacilityDto[] resp = rest_template.getForObject("http://localhost:8083/getFacilities",  FacilityDto[].class);
+		FacilityDto[] resp = rest_template.getForObject(URL_GET_FACILITIES,  FacilityDto[].class);
 		
 		/* Change cet objet Array en Liste */
 		return Arrays.asList(resp);
@@ -59,7 +59,7 @@ public class TowerService {
 	 * */
 	public void recieveEndedFire(FireDto f) {
 		if(managed_fire_set.containsKey(f.getId())) {
-			rest_template.getForObject(URL_END_VEHICULE+f.getId(),  Boolean.class);
+			rest_template.getForObject(URL_END_FIRE_FACILITY+f.getId(),  Boolean.class);
 			
 		}
 	}
@@ -107,7 +107,7 @@ public class TowerService {
 	
 			HttpEntity<FireDto> request = new HttpEntity<FireDto>(fi);
 			rest_template.exchange(
-					this.URL_PUT_VEHICULE+fi.getId().toString(), 
+					this.URL_PUT_FIRE_FACILITY+fi.getId().toString(), 
 					HttpMethod.POST, 
 					request, 
 					Boolean.class);
