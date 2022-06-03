@@ -2,7 +2,6 @@
 <html>
 <head>
 	<meta charset="utf-8" />
-	<link rel="stylesheet" href="Style.css" />
 	<title>Map</title>
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
    	integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
@@ -41,31 +40,42 @@
             <fieldset name="fireTypeFilter">
                 <legend>Types de feu</legend>
                 <div>
-                    <input type="checkbox" id="A" value="a" checked>
+                    <input type="checkbox" onclick="toggle(this)" />Feux<br/>
+                </div>
+                <script language="JavaScript">
+                    function toggle(source) {
+                        checkboxes = document.getElementsByName('feu');
+                        for(var i=0, n=checkboxes.length;i<n;i++) {
+                            checkboxes[i].checked = source.checked;
+                        }
+                    }
+                </script>
+                <div class="fire_checkbox">
+                    <input type="checkbox" name="feu" id="A" value="a" checked>
                     <label>A</label>
                 </div>
-                <div>
-                    <input type="checkbox" id="B_gasoline" value="b_gasoline" checked>
+                <div class="fire_checkbox">
+                    <input type="checkbox" name="feu" id="B_gasoline" value="b_gasoline" checked>
                     <label>B_Gasoline</label>
                 </div>
-                <div>
-                    <input type="checkbox" id="B_Alcohol" value="b_alcohol" checked>
+                <div class="fire_checkbox">
+                    <input type="checkbox" name="feu" id="B_Alcohol" value="b_alcohol" checked>
                     <label>B_Alcohol</label>
                 </div>
-                <div>
-                    <input type="checkbox" id="B_Plastics" value="b_plastics" checked>
+                <div class="fire_checkbox">
+                    <input type="checkbox" name="feu" id="B_Plastics" value="b_plastics" checked>
                     <label>B_Plastics</label>
                 </div>
-                <div>
-                    <input type="checkbox" id="C_flammable_gases" value="c_flammable_gases" checked>
+                <div class="fire_checkbox">
+                    <input type="checkbox" name="feu" id="C_flammable_gases" value="c_flammable_gases" checked>
                     <label>C_Flammable_Gases</label>
                 </div>
-                <div>
-                    <input type="checkbox" id="D_Metals" value="d_metals" checked>
+                <div class="fire_checkbox">
+                    <input type="checkbox" name="feu" id="D_Metals" value="d_metals" checked>
                     <label>D_Metals</label>
                 </div>
-                <div>
-                    <input type="checkbox" id="E_Electrics" value="e_electrics" checked>
+                <div class="fire_checkbox">
+                    <input type="checkbox" name="feu" id="E_Electrics" value="e_electrics" checked>
                     <label>E_Electrics</label>
                 </div>
                 <!-- <div>
