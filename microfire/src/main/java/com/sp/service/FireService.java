@@ -3,6 +3,7 @@ package com.sp.service;
 import org.springframework.stereotype.Service;
 import com.sp.model.Fire;
 import com.sp.repository.FireRepository;
+import com.sp.tools.CommAPI;
 
 @Service
 public class FireService {
@@ -39,9 +40,13 @@ public class FireService {
 	
 	
 	
-	public Iterable<Fire> getAlldBFires() {
-		Iterable<Fire> fOpt = fRepository.findAll();
-		return fOpt;
+	public Fire[] getAlldBFires() {
+		return CommAPI.getAllFire();
+	}
+
+
+	public Fire getFireById(Integer fireId) {
+		return CommAPI.getFireById(fireId);
 	}
 	
 	
