@@ -1,5 +1,6 @@
 .vscode
 */.metadata/
+*.metadata
 */.settings/
 *.classpath
 *.project

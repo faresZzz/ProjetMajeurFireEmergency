@@ -1,22 +1,14 @@
 package com.sp.service;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -32,38 +24,43 @@ public class TowerService {
 	private static RestTemplate rest_template = new RestTemplate();
 	List<FireDto> fire_list;
 	List<FacilityDto> facility_list;
-	Map<Integer,Integer> managed_fire_set;
+	
+	Map<Integer,Integer> managed_fire_set = new HashMap<>();
 	
 	// URLs
-	private String URL_PUT_VEHICULE = "localhost:8082/manageFire/";
-	private String URL_GET_FACILITIES = "localhost:8081/getFacilities";
+	private String URL_VEHICULE = "localhost:8082/";
+	private String URL_FACILITY = "localhost:8081/";
+	
+	private String URL_PUT_VEHICULE = URL_VEHICULE+"manageFire/";
+	private String URL_END_VEHICULE = URL_VEHICULE+"endedFire/";
+	private String URL_GET_FACILITIES = URL_FACILITY+"getFacilities";
+	
 
 	/*
 	 * Methodes
 	 * */
 	
 	/**
-	 * 
-	 * */
-	public void initTower() {
-		managed_fire_set = new HashMap<>();
-	}
-	
-	/**
 	 * Permet de recuperer les facility
 	 * */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void getFacilities() {
+		/* Fais la requete pour obtenir une liste de casernes*/
 		FacilityDto[] resp = rest_template.getForObject(URL_GET_FACILITIES,  FacilityDto[].class);
+		
+		/* Change cet objet Array en Liste */
 		facility_list = Arrays.asList(resp);
 		
 	}
 	
 	/**
-	 * Cas ou un feu est finit
+	 * Cas ou un feu est finit, permet de notifier le
 	 * */
-	public void recieveEndedFire(Integer fire_id) {
-		
+	public void recieveEndedFire(FireDto f) {
+		if(managed_fire_set.containsKey(f.getId())) {
+			rest_template.getForObject(URL_END_VEHICULE+f.getId(),  Boolean.class);
+			
+		}
 	}
 	
 	
@@ -88,9 +85,11 @@ public class TowerService {
 	 * */
 	private FacilityDto getClosestFacility(FireDto fi) {
 		float min_dist = 1000000000000f;
-		FacilityDto ret = null;
+		FacilityDto ret = null; 
+		
 		for (FacilityDto fa : facility_list) {
-			float dist = this.calculateDistance(fa, fi);
+			float dist = this.calculateDistance(fa, fi); // Calcule la distance min
+			
 			if(dist < min_dist) {
 				min_dist = dist;
 				ret = fa;
@@ -102,11 +101,10 @@ public class TowerService {
 	/**
 	 * Send fire
 	 * */
-	
 	public Boolean sendFire(FireDto fi, FacilityDto fa) {
 		Boolean ret = false;
 		try {
-			
+	
 			HttpEntity<FireDto> request = new HttpEntity<FireDto>(fi);
 			rest_template.exchange(
 					this.URL_PUT_VEHICULE+fi.getId().toString(), 
