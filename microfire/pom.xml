@@ -24,9 +24,9 @@
 
 	<dependencies>
 		<dependency>
-    		<groupId>org.hibernate</groupId>
-    		<artifactId>hibernate-core</artifactId>
-    		<version>5.4.2.Final</version>
+			<groupId>com.project</groupId>
+			<artifactId>fire-simulator-public</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
@@ -80,12 +80,27 @@
 			<optional>true</optional>
 	    </dependency>
 	    
-	    <dependency>
-	      	<groupId>com.projetmajeurfire</groupId>
-			<artifactId>CommonDtoTools</artifactId>
-	    </dependency>
 		
 	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>gitlab-maven</id>
+			<url>https://gitlab.com/api/v4/projects/26319036/packages/maven</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>gitlab-maven</id>
+			<url>https://gitlab.com/api/v4/projects/26319036/packages/maven</url>
+		</repository>
+
+		<snapshotRepository>
+			<id>gitlab-maven</id>
+			<url>https://gitlab.com/api/v4/projects/26319036/packages/maven</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<build>
 		<plugins>

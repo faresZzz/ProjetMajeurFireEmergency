@@ -5,17 +5,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.project.model.dto.VehicleDto;
 import com.sp.model.Facility;
 import com.sp.repository.FacilityRepository;
 // 164 151
@@ -32,9 +27,9 @@ public class FacilityService {
 	private Collection<Integer> list_id = new LinkedHashSet<Integer>();
 	private List<Integer> listFacilityRefID = new ArrayList<Integer>();
 	
-	private List<VehicleDTO> listVehicle;
+	private List<VehicleDto> listVehicle;
 	/*
-	 * Methodes
+	 * Methodesinterface
 	 * */
 	
 	/**
@@ -53,16 +48,16 @@ public class FacilityService {
 	 * */
 	public void updateFacilities() {
 		
-		/* Permet de recuperer tout les facility*/
-		HashMap<Integer,Facility> hash_map = this.getHashMap((ArrayList<Facility>)this.getHTTPFacilities());
-		
-		/* Pour les id de camions dans la liste de notre equipe*/
-		for (Integer id:this.list_id) {
-			/* Si le hashmap a un camion qui contient cet id, le sauvegarder*/
-			if(hash_map.containsKey(id.hashCode())) {
-				fRepository.save(hash_map.get(id.hashCode()));
-			}
-		}
+//		/* Permet de recuperer tout les facility*/
+//		HashMap<Integer,Facility> hash_map = this.getHashMap((ArrayList<Facility>)getHTTPFacilities());
+//		
+//		/* Pour les id de camions dans la liste de notre equipe*/
+//		for (Integer id:this.list_id) {
+//			/* Si le hashmap a un camion qui contient cet id, le sauvegarder*/
+//			if(hash_map.containsKey(id.hashCode())) {
+//				fRepository.save(hash_map.get(id.hashCode()));
+//			}
+//		}
 	}
 	
 	/**
@@ -73,22 +68,21 @@ public class FacilityService {
 	}
 	
     
-}
-	
 	
 	public Collection<Facility> getHTTPVehicle() {
 		
-		/**
-		 * Permet d'appeller via un get http une liste en json convertie en liste d'objet java
-		 * */
-		VehicleDTO[] Vehicle = rest_template.getForObject(URL_GET_VEHICLE, VehicleDTO[].class);
-	
-		ArrayList<Facility> fList = responseEntity.getBody();
-		for (Facility facility : fList) {
-			
-		}
-		
-		return fList;
+//		/**
+//		 * Permet d'appeller via un get http une liste en json convertie en liste d'objet java
+//		 * */
+//		VehicleDTO[] Vehicle = rest_template.getForObject(URL_GET_VEHICLE, VehicleDTO[].class);
+//	
+//		ArrayList<Facility> fList = responseEntity.getBody();
+//		for (Facility facility : fList) {
+//			
+//		}
+//		
+//		return fList;
+		return null;
 	}
 	
 	/**
