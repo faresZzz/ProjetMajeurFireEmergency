@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+
 import com.sp.model.Vehicle;
 import com.sp.repository.VehicleRepository;
 // 164 151
@@ -28,6 +30,7 @@ public class VehicleService {
 	private String URL_PUT_VEHICULE =  "http://vps.cpe-sn.fr:8081/vehicle/0eb29fc1-d666-4dd6-9a6e-933f29f87689/";
 	private Collection<Integer> list_id = new LinkedHashSet<Integer>();
 
+	
 	/*
 	 * Methodes
 	 * */
