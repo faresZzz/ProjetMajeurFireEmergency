@@ -21,16 +21,29 @@ public class FacilityRestCrt {
 	FacilityService fService;
 	
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/gererFire/{idCaserne}")
+	@RequestMapping(method = RequestMethod.POST, value = "/manageFire/{idCaserne}")
 	public boolean gererFeu(@RequestBody FireDto Fire, @PathVariable String idCaserne) {
 		System.out.println(Fire);
 		System.out.println(idCaserne);
 		List<VehicleDto> listVehicle  =  fService.getHTTPVehicle(idCaserne);
 		System.out.println(listVehicle);
 		return fService.envoyerCamion(listVehicle,Fire);
-		
-		
 	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/handleFire/{idCaserne}")
+	public boolean handleFire(@RequestBody FireDto fire, @PathVariable String idCaserne) {
+		System.out.println(fire);
+		System.out.println(idCaserne);
+		return fService.envoyerVehicleEnIntervention(Integer.valueOf(idCaserne), fire);
+	}
+	
+	@RequestMapping(method = RequestMethod.PUT, value = "/endFire/{idFire}")
+	public void endFire(@PathVariable String idFire, @RequestBody FireDto fire) {
+		System.out.println(idFire);
+
+		fService.endFire(fire, Integer.valueOf( idFire));
+	}
+	
 	
 	
 	
