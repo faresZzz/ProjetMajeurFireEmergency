@@ -14,139 +14,36 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-
+import com.project.model.dto.Coord;
+import com.project.model.dto.FacilityDto;
+import com.project.model.dto.FireDto;
+import com.project.model.dto.VehicleDto;
 import com.sp.model.Vehicle;
 import com.sp.repository.VehicleRepository;
+import com.sp.tools.VehicleTools;
 // 164 151
 
 @Service
 public class VehicleService {
 	
-	@Autowired
-	VehicleRepository vRepository;
+	private Thread vehicleTread;
+	private VehicleRunnable vehicleRunnable;
+	private VehicleDto vehicle;
+	private FacilityDto facility;
 	
-	private static RestTemplate rest_template = new RestTemplate();
-	private String URL_GET_VEHICLE = "http://vps.cpe-sn.fr:8081/vehicle";
-	private String URL_PUT_VEHICULE =  "http://vps.cpe-sn.fr:8081/vehicle/0eb29fc1-d666-4dd6-9a6e-933f29f87689/";
-	private Collection<Integer> list_id = new LinkedHashSet<Integer>();
 
-	
-	/*
-	 * Methodes
-	 * */
-	
-	/**
-	 *  Permet d'initialiser les vehicules
-	 * */
-	public void initVehicules() {
-		// TODO : Chnager la methode quand on pourra obtenir la liste automatiquement
-		this.list_id.add(250);
-		this.list_id.add(151);
+	public boolean newMission(Integer idVehicle, FireDto fire) {
+		// TODO  potentiellement tester si le vehicle est disponible , tester la quantitié de liquide et de carburant 
 		
-		this.updateVehicles();
-	}
-	
-	/**
-	 * Permet de mettre a jour la db de vehicules
-	 * */
-	public void updateVehicles() {
+		this.vehicle = VehicleTools.getVehicle(idVehicle); // on recupere le vehicle
+		this.facility = VehicleTools.getFacility(vehicle.getFacilityRefID()); // on recupere la facility associer
 		
-		/* Permet de recuperer tout les vehicules*/
-		HashMap<Integer,Vehicle> hash_map = this.getHashMap((ArrayList<Vehicle>)this.getHTTPVehicles());
+		this.vehicleRunnable = new VehicleRunnable(vehicle, fire, new Coord(this.facility.getLon(), this.facility.getLat()), 0); // on creé le runnable
 		
-		/* Pour les id de camions dans la liste de notre equipe*/
-		for (Integer id:this.list_id) {
-			/* Si le hashmap a un camion qui contient cet id, le sauvegarder*/
-			if(hash_map.containsKey(id.hashCode())) {
-				vRepository.save(hash_map.get(id.hashCode()));
-			}
-		}
-	}
-	
-	/**
-	 * show database
-	 * */
-	public String printVehicules() {
-		return vRepository.findAll().toString();
-	}
-	
-	/**
-	 * Permet de deplacer un vehicule d'un point A � un point B
-	 * */
-	public boolean moveVehicle(Integer id, Double lon, Double lat) {
-		Vehicle v = vRepository.findById(id).get();
-		
-		//if(v==null) {return false;}
-		
-		v.setLon(lon);
-		v.setLat(lat);
-		
-		try {
-			HttpEntity<Vehicle> request = new HttpEntity<Vehicle>(v);
-			rest_template.exchange(this.URL_PUT_VEHICULE+id.toString(), 
-					HttpMethod.PUT, 
-					request, 
-					Boolean.class);
-		}
-		catch( HttpClientErrorException httpClientErrorException) {
-			System.out.println(httpClientErrorException.getResponseBodyAsString()); 
-		}
-		
-		
-		
-		this.updateVehicles();
+		this.vehicleTread = new Thread(this.vehicleRunnable);// on creé le Thread 
+		this.vehicleTread.start();// on lance le Tread
 		
 		return true;
-	}
-    
-	/**
-	 * Saves the fire to the database
-	 * */
-	private void addVehicle(Vehicle v) {
-		vRepository.save(v); // Sauvegarde du user dans la db	
-	}
-	
-	private void addAllVehicle(Collection<Vehicle> vlist) {
-		vRepository.saveAll(vlist);
-	}
-	
-	
-	public Iterable<Vehicle> getAlldBFires() {
-		Iterable<Vehicle> vOpt = vRepository.findAll();
-		return vOpt;
-	}
-	
-	public Collection<Vehicle> getHTTPVehicles() {
-		
-		/**
-		 * Permet d'appeller via un get http une liste en json convertie en liste d'objet java
-		 * */
-		ResponseEntity<ArrayList<Vehicle>> responseEntity = 
-				  rest_template.exchange(
-					URL_GET_VEHICLE,
-				    HttpMethod.GET,
-				    null,
-				    new ParameterizedTypeReference<ArrayList<Vehicle>>() {}
-				  );
-		
-		ArrayList<Vehicle> vList = responseEntity.getBody();
-		
-		
-		return vList;
-	}
-	
-	/**
-	 * Permet de convertir un array en hashmap en utilisant
-	 * */
-	public HashMap<Integer,Vehicle> getHashMap(ArrayList<Vehicle>vehicles){
-		HashMap<Integer,Vehicle> ret = new HashMap<Integer,Vehicle>();
-		
-		for (Vehicle vehicle : vehicles) {
-			ret.put(vehicle.hashCode(), vehicle);
-		}
-		
-		return ret;
-		
 	}
 
 }

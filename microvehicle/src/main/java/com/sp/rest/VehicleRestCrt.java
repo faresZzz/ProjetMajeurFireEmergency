@@ -1,10 +1,14 @@
 package com.sp.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.project.model.dto.FireDto;
 import com.sp.service.VehicleService;
 
 
@@ -16,17 +20,12 @@ public class VehicleRestCrt {
 	/**
 	 * 
 	 * */
-	@RequestMapping(method = RequestMethod.GET, value = "/move")
-	public void move() {
-		vService.moveVehicle(250, 50.0, 50.0);
-		System.out.println(vService.printVehicules());
+	@RequestMapping(method = RequestMethod.POST, value = "/newMission/{idVehicle}") // utilisation de la method post afin de pouvoir recupere une info avec restTemplate
+	public boolean newMission(@PathVariable String idVehicle, @RequestBody FireDto fire) {
+		return vService.newMission(Integer.valueOf(idVehicle), fire);
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/start")
-	public void start() {
-		vService.initVehicules();
-		System.out.println(vService.printVehicules()) ;
-	}
+
 	
 	
 }
