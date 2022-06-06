@@ -15,26 +15,26 @@ import org.springframework.web.client.RestTemplate;
 
 import com.project.model.dto.FacilityDto;
 import com.project.model.dto.FireDto;
+import com.sp.tools.TowerTools;
 
 // 164 151
 
+/*
+ *  TODO envoi a la facility secondaire si la premiere n'as pas de camion dispo
+ *  Ajout selection des feu que l'on decide de prendre (fonction de la distance a la facility (type de feu ))
+ *  Peut etre selection de la facility en fonction des types de camions qu'elle a et du type de feu
+ *  
+ */
 @Service
 public class TowerService {
+	 
+
 	
-	@Autowired
-	private static RestTemplate rest_template = new RestTemplate();
 	List<FireDto> fire_list;
 	List<FacilityDto> facility_list = this.getFacilities();
 	
 	Map<Integer,Integer> managed_fire_set = new HashMap<>();
 	
-	// URLs
-	private static String URL_DB = "http://vps.cpe-sn.fr:8081/";
-	private String URL_FACILITY = "http://localhost:8083/";
-	
-	private String URL_PUT_FIRE_FACILITY = URL_FACILITY+"manageFire/";
-	private String URL_END_FIRE_FACILITY = URL_FACILITY+"endedFire/";
-	private String URL_GET_FACILITIES = URL_DB+"facility";
 	
 
 	/*
@@ -47,7 +47,7 @@ public class TowerService {
 	 * */
 	public List<FacilityDto> getFacilities() {
 		/* Fais la requete pour obtenir une liste de casernes*/
-		FacilityDto[] resp = rest_template.getForObject(URL_GET_FACILITIES,  FacilityDto[].class);
+		FacilityDto[] resp = TowerTools.getFacilities();
 		
 		/* Change cet objet Array en Liste */
 		return Arrays.asList(resp);
@@ -59,7 +59,7 @@ public class TowerService {
 	 * */
 	public void recieveEndedFire(FireDto f) {
 		if(managed_fire_set.containsKey(f.getId())) {
-			rest_template.getForObject(URL_END_FIRE_FACILITY+f.getId(),  Boolean.class);
+			TowerTools.endFire( f.getId());
 			
 		}
 	}
@@ -101,17 +101,12 @@ public class TowerService {
 	/**
 	 * Send fire
 	 * */
-	public Boolean sendFire(FireDto fi, FacilityDto fa) {
+	public Boolean sendFire(FireDto fi, FacilityDto fa) { 
 		Boolean ret = false;
 		try {
 	
-			HttpEntity<FireDto> request = new HttpEntity<FireDto>(fi);
-			rest_template.exchange(
-					this.URL_PUT_FIRE_FACILITY+fi.getId().toString(), 
-					HttpMethod.POST, 
-					request, 
-					Boolean.class);
-			ret = true;
+			ret = TowerTools.sendFire(fa.getId(), fi);
+			
 		}
 		catch( HttpClientErrorException httpClientErrorException) {
 			System.out.println(httpClientErrorException.getResponseBodyAsString()); 
@@ -119,4 +114,13 @@ public class TowerService {
 		return ret;
 	}
 	
+	
+	public void endFire(FireDto fire, int fireId)
+	{
+		// suppression du feu de la liste des feux
+		if (this.managed_fire_set.containsKey(fireId))
+		{			
+			managed_fire_set.remove(fireId);
+		}
+	}
 }
