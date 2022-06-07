@@ -38,10 +38,28 @@ var e_electrics = document.querySelector('input[value="e_electrics"]');
 var range = document.querySelector('input[value="range"]');
 var intensity = document.querySelector('input[value="intensity"]');
 
-var checkboxList = [[facilityCheckbox,Facility],[truckCheckbox,Truck],[fireCheckbox,Fire],[b_gasoline, B_Gasoline],
-    [c_flammable_gases, C_Flammable_Gases],[a, A],[b_alcohol, B_Alcohol],[b_plastics, B_Plastics],[d_metals, D_Metals],[e_electrics, E_Electrics]];
+var checkboxList = [
+    [facilityCheckbox, Facility],
+    [truckCheckbox, Truck],
+    [fireCheckbox, Fire],
+    [b_gasoline, B_Gasoline],
+    [c_flammable_gases, C_Flammable_Gases],
+    [a, A],
+    [b_alcohol, B_Alcohol],
+    [b_plastics, B_Plastics],
+    [d_metals, D_Metals],
+    [e_electrics, E_Electrics]
+];
 
-var fireTypeCheckboxList = [[b_gasoline, B_Gasoline],[c_flammable_gases, C_Flammable_Gases],[a, A],[b_alcohol, B_Alcohol],[b_plastics, B_Plastics],[d_metals, D_Metals],[e_electrics, E_Electrics]];
+var fireTypeCheckboxList = [
+    [b_gasoline, B_Gasoline],
+    [c_flammable_gases, C_Flammable_Gases],
+    [a, A],
+    [b_alcohol, B_Alcohol],
+    [b_plastics, B_Plastics],
+    [d_metals, D_Metals],
+    [e_electrics, E_Electrics]
+];
 
 
 // for (let index = 0; index < fireTypeArray.length; index++) {
@@ -60,29 +78,27 @@ var fireTypeCheckboxList = [[b_gasoline, B_Gasoline],[c_flammable_gases, C_Flamm
 // }
 
 checkboxList.forEach(checkbox => {
-    checkbox[0].onchange = function () {
-    if (checkbox[0].checked) {
-        map.addLayer(checkbox[1]);
-    }
-    else {
-        map.removeLayer(checkbox[1]);
-    }
-}
-});
-
-function master_checkbox(source){
-    fireTypeCheckboxList.forEach(checkbox =>{
-        if (source.checked) {
-            checkbox[0].disabled=false;
-            checkbox[0].checked=true;
+    checkbox[0].onchange = function() {
+        if (checkbox[0].checked) {
             map.addLayer(checkbox[1]);
-        }
-        else {
-            checkbox[0].disabled=true;
-            checkbox[0].checked=true;
+        } else {
             map.removeLayer(checkbox[1]);
         }
-        
+    }
+});
+
+function master_checkbox(source) {
+    fireTypeCheckboxList.forEach(checkbox => {
+        if (source.checked) {
+            checkbox[0].disabled = false;
+            checkbox[0].checked = true;
+            map.addLayer(checkbox[1]);
+        } else {
+            checkbox[0].disabled = true;
+            checkbox[0].checked = true;
+            map.removeLayer(checkbox[1]);
+        }
+
     })
 }
 
@@ -92,37 +108,37 @@ function master_checkbox(source){
 function getFire() {
     const url = 'http://vps.cpe-sn.fr:8081/fire'
     var fireType = {
-        'B_Gasoline': B_Gasoline,
-        'C_Flammable_Gases': C_Flammable_Gases,
-        'A': A,
-        'B_Alcohol': B_Alcohol,
-        "B_Plastics": B_Plastics,
-        'D_Metals': D_Metals,
-        'E_Electric': E_Electrics,
-    }
-    //const element = document.querySelector('#post-request .article-id');
-    // const requestOptions = {
-    // method: 'GET',
-    // headers: { 'Content-Type': 'application/json' },
-    // body: JSON.stringify({ title: 'Fetch POST Request Example' })
-    // };
+            'B_Gasoline': B_Gasoline,
+            'C_Flammable_Gases': C_Flammable_Gases,
+            'A': A,
+            'B_Alcohol': B_Alcohol,
+            "B_Plastics": B_Plastics,
+            'D_Metals': D_Metals,
+            'E_Electric': E_Electrics,
+        }
+        //const element = document.querySelector('#post-request .article-id');
+        // const requestOptions = {
+        // method: 'GET',
+        // headers: { 'Content-Type': 'application/json' },
+        // body: JSON.stringify({ title: 'Fetch POST Request Example' })
+        // };
     fetch(url)
         .then(response => response.json())
         .then(data => {
             data.forEach(element => {
-               
+
                 // console .log(fireType[element.type])
-                
+
                 L.marker([element.lat, element.lon], { icon: FireIcon }).addTo(fireType[element.type]).addTo(Fire).bindPopup("<h2> Feu n°" + element.id + "</h2>" + "<ul>" +
                     "<li> Type : " + element.type + "</li>" + "<li> Intensity : " + element.intensity + "</li>" +
                     "<li> Range : " + element.range + "</li>" + "</ul>");
-            }
-            )
+            })
 
 
         })
 
 }
+
 function getFacility() {
     const url = 'http://vps.cpe-sn.fr:8081/facility'
 
@@ -141,47 +157,99 @@ function getFacility() {
                     "<li> Name : " + element.name + "</li>" +
                     "<li> Max Vehicle Space : " + element.maxVehicleSpace + "</li>" +
                     "<li> PeopleCapacity : " + element.peopleCapacity + "</li>" + "</ul>");
-            }
-            )
+            })
 
 
         });
 
 }
+var listeTruck = [];
+
 function getTruck() {
     const url = 'http://vps.cpe-sn.fr:8081/vehicle'
 
     const element = document.querySelector('#post-request .article-id');
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: 'Fetch POST Request Example' })
-    };
+
     fetch(url)
         .then(response => response.json())
         .then(data => {
             data.forEach(element => {
-
-                L.marker([element.lat, element.lon], { icon: TruckIcon }).addTo(Truck).bindPopup("<h2> Camion n°" + element.id + "</h2>" + "<ul>" +
+                var latlng = L.latLng(element.lat, element.lon);
+                L.marker(latlng, { icon: TruckIcon }).addTo(Truck).bindPopup("<h2> Camion n°" + element.id + "</h2>" + "<ul>" +
                     "<li> Liquid Type : " + element.liquidType + "</li>" + "<li> Liquid Quantity : " + element.liquidQuantity + "</li>" +
                     "<li> Fuel : " + element.fuel + "</li>" + "<li> CrewMember : " + element.crewMember + "</li>" +
                     "<li> facilityRefID : " + element.facilityRefID + "</li>" +
                     "</ul>");
-            }
-            )
+            })
 
 
         })
 }
 
+function isObjectEmpty(value) {
+    return (
+        Object.prototype.toString.call(value) === '[object Object]' &&
+        JSON.stringify(value) === '{}'
+    );
+}
+
+function update() {
+
+    var ListeElement = {};
+    const url = 'http://vps.cpe-sn.fr:8081/vehicle'
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+
+            data.forEach(element => {
+                if (!isObjectEmpty(ListeElement)) {
+                    console.log("1   ---")
+                    if (ListeElement[element.id] != undefined) {
+
+
+                        console.log(element);
+                        var layer = Truck.getLayer(ListeElement[element.id]).setLatLng(L.latLng(element.lat, element.lon));
+                        ListeElement[Truck.getLayerId(layer)] = element.id;
+
+                    }
+
+                } else {
+                    console.log("2   ---")
+                    console.log(element);
+                    var layer = L.marker([element.lat, element.lon], { icon: TruckIcon })
+                    layer.addTo(Truck).bindPopup("<h2> Camion n°" + element.id + "</h2>" + "<ul>" +
+                        "<li> Liquid Type : " + element.liquidType + "</li>" + "<li> Liquid Quantity : " + element.liquidQuantity + "</li>" +
+                        "<li> Fuel : " + element.fuel + "</li>" + "<li> CrewMember : " + element.crewMember + "</li>" +
+                        "<li> facilityRefID : " + element.facilityRefID + "</li>" +
+                        "</ul>");
+                    ListeElement[Truck.getLayerId(layer)] = element.id;
+                }
+
+
+            });
+
+
+        })
+
+
+
+}
+
 function main() {
     // L.marker.remove;
-    getFacility();
+    Fire.clearLayers();
     getFire();
-    getTruck();
+
+    //map.removeLayer(Truck)
+    update();
+
+    //map.removeLayer(Facility)
+    getFacility();
+
+
     console.log('Done')
-    //L.marker.clearLayers();
-    setTimeout(main, 1000); // try again in 10 seconds
+        //L.marker.clearLayers();
+    setTimeout(main, 1000); // try again in 1 second
 }
 
 main();
