@@ -1,17 +1,17 @@
 package com.sp.service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 
+import org.hibernate.mapping.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
 import com.project.model.dto.FireDto;
 import com.sp.model.Fire;
 import com.sp.repository.FireRepository;
@@ -29,7 +29,8 @@ public class UpdateRunnable implements Runnable {
 	private String URL_TOWER = "http://localhost:8082/";
 	
 	private String URL_POST_NEWFIRE = URL_TOWER+"fireStarted/";
-	private String URL_POST_DELETEFIRE = URL_TOWER+"fireEnded/";
+	private String URL_POST_INITTOWER = URL_TOWER+"initTower/";
+	//private String URL_POST_DELETEFIRE = URL_TOWER+"fireEnded/";
 
 	public UpdateRunnable(FireRepository frepo) {
 		this.frepo = frepo;
@@ -87,7 +88,7 @@ public class UpdateRunnable implements Runnable {
 		/* Permet de supprimer les feu n'existant plus */
 		for (Fire fire_repo : fires_repo) {
 			if(!valid_id_fire.contains(fire_repo.getId())) {
-				rest_template.postForObject(URL_POST_DELETEFIRE, convertToDto(fire_repo), Boolean.class);
+				//rest_template.postForObject(URL_POST_DELETEFIRE, convertToDto(fire_repo), Boolean.class);
 				System.out.println("\n Fire Out! \n");
 				frepo.delete(fire_repo);
 			}
@@ -142,10 +143,13 @@ public class UpdateRunnable implements Runnable {
 	}
 	
 	private void sendFirstFires() {
+		ArrayList<FireDto> fdto_list = new ArrayList<FireDto>();
+		
 		for (Fire f : frepo.findAll()) {
+			fdto_list.add(convertToDto(f));
 			System.out.println("\n New Fire \n");
-			rest_template.postForObject(URL_POST_NEWFIRE, convertToDto(f), Boolean.class);
 		} ;
+		rest_template.postForObject(URL_POST_INITTOWER, fdto_list, Boolean.class);
 	}
 
 }

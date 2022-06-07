@@ -17,14 +17,6 @@ public class TowerRestCrt {
 	TowerService towerService;
 	
 	/**
-	 * Feu commence
-	 * */
-	@RequestMapping(method = RequestMethod.POST, value = "/fireEnded")
-	public void fireEnded(@RequestBody FireDto f) {
-		towerService.recieveEndedFire(f);
-	}
-	
-	/**
 	 * Feu finit
 	 * */
 	@RequestMapping(method = RequestMethod.POST, value = "/fireStarted")
@@ -32,11 +24,17 @@ public class TowerRestCrt {
 		towerService.recieveNewFire(f);
 	}
 	
-	@RequestMapping(method = RequestMethod.PUT, value = "/endFire/{fireId}")
-	public void endFire( @PathVariable String fireId) {
-		towerService.endFire(Integer.valueOf(fireId));
+
+	@RequestMapping(method = RequestMethod.PUT, value = "/endFire")
+	public void endFire(@RequestBody FireDto fire) {
+		towerService.recieveEndedFire(fire);
 	}
 	
+	@RequestMapping(method = RequestMethod.POST, value = "/initTower")
+	public Boolean initTower(@RequestBody FireDto[] fires) {
+		towerService.initTower(fires);
+		return true;
+	}
 	
 	
 	
