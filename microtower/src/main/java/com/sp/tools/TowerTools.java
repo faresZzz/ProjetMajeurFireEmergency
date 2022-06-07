@@ -15,7 +15,7 @@ public class TowerTools {
 	private static String URL_DB = "http://vps.cpe-sn.fr:8081/";
 	private static String URL_FACILITY = "http://localhost:8083/";
 	
-	private static String URL_PUT_FIRE_FACILITY = URL_FACILITY + "manageFire/";
+	private static String URL_PUT_FIRE_FACILITY = URL_FACILITY + "handleFire/";
 	private static String URL_END_FIRE_FACILITY = URL_FACILITY + "endedFire/";
 	private static String URL_GET_FACILITIES = URL_DB + "facility";
 	

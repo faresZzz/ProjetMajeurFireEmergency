@@ -117,7 +117,9 @@ public class TowerService {
 	 * Cas ou un feu est finit, permet de notifier le
 	 * */
 	
-	public void recieveEndedFire(FireDto f) {
+	public void recieveEndedFire(int fireId) {
+		FireDto f = fire_map.get(fireId);
+		
 		System.out.println("\n[$] Fire "+f.getId()+" has been ended");
 		
 		this.fire_map.remove(f.getId());
@@ -219,16 +221,6 @@ public class TowerService {
 			System.out.println(httpClientErrorException.getResponseBodyAsString()); 
 		}
 		return ret;
-	}
-	
-	
-	public void endFire(int fireId)
-	{
-		// suppression du feu de la liste des feux
-		if (this.managed_fire_set.containsKey(fireId))
-		{			
-			managed_fire_set.remove(fireId);
-		}
 	}
 }
 	
