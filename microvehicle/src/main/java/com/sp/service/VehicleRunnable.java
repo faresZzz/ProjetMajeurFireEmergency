@@ -22,8 +22,6 @@ public class VehicleRunnable implements Runnable{
 	
 	private VehicleDto interventionVehicle;
 	private FireDto fire;
-	
-	private static  double R = 6372795.477598;
 	private List<Coord> itineraire;
 	
 	public VehicleRunnable(VehicleDto interventionVehicle, FireDto fire, Coord facilityCoord, int niveauDeplacement)
@@ -45,10 +43,19 @@ public class VehicleRunnable implements Runnable{
 	
 	public void run()
 	{
-		
-		if (this.niveauDeplacement == 3)
+		if (this.niveauDeplacement == 2)
+		{
+			this.itineraire = this.calculNouvellesCoords(vehicleCoord, fireCoord, 20);
+		}
+		else if (this.niveauDeplacement == 3)
 		{
 			this.itineraire = VehicleTools.getItineraire(this.vehicleCoord, this.fireCoord);
+			if (this.itineraire.isEmpty())
+			{
+				this.teleportation(facilityCoord);
+				this.isFireEnd = true;
+				this.interventionEnd = true;
+			}
 		}
 		// tant que le feu n'est pas terminer
 		while (!this.isFireEnd)
@@ -56,28 +63,38 @@ public class VehicleRunnable implements Runnable{
 			// si le vehicule n'est pas arriver dans le range du feu, c'est a dire sur le lieux d'intervention
 			if (GisTools.computeDistance2(this.fireCoord, this.vehicleCoord)  > this.fire.getRange())
 			{
-				System.out.println("je vais au feu ");
+				System.out.println("\n[$] Je vais au feu : " + this.interventionVehicle.getId());
 				// on deplace le vehicule suivant le niveau de deplacement choisi
 				switch(this.niveauDeplacement)
 				{
 				case 1:
-					this.teleportation(this.fireCoord);
+					this.moveVehicle(this.fireCoord);
 					break;
 					
 				case 2: 
-					this.deplacementLigneDroite(this.fireCoord);
-					break;
-					
-				case 3:
 					if (!this.itineraire.isEmpty())
 					{
-						this.deplacementGPS(this.itineraire.get(0));
+						this.moveVehicle(this.itineraire.get(0));
 						this.itineraire.remove(0);
 						
 					}
 					else
 					{
-						this.deplacementGPS(this.fireCoord);
+						this.moveVehicle(this.fireCoord);
+
+					}
+					break;
+					
+				case 3:
+					if (!this.itineraire.isEmpty())
+					{
+						this.moveVehicle(this.itineraire.get(0));
+						this.itineraire.remove(0);
+						
+					}
+					else
+					{
+						this.moveVehicle(this.fireCoord);
 
 					}
 					break;
@@ -87,7 +104,7 @@ public class VehicleRunnable implements Runnable{
 			}
 			else
 			{
-				System.out.println("j'eteins le feu ");
+				System.out.println("\n[$] J'eteins le feu :" + this.interventionVehicle.getId());
 			}
 			// on update le vehicle et le feu
 			this.updateVehicle();
@@ -100,8 +117,12 @@ public class VehicleRunnable implements Runnable{
 			} 
 			
 		}
-		//reteour a la base
-		if (this.niveauDeplacement == 3)
+		//retour a la base
+		if (this.niveauDeplacement == 2)
+		{
+			this.itineraire = this.calculNouvellesCoords(vehicleCoord, facilityCoord, 20);
+		}
+		else if (this.niveauDeplacement == 3)
 		{
 			this.itineraire = VehicleTools.getItineraire(this.vehicleCoord,this.facilityCoord);
 		}
@@ -112,28 +133,38 @@ public class VehicleRunnable implements Runnable{
 			// si le vehicule n'est pas dans a la base( coord de la base)
 			if (GisTools.computeDistance2(this.facilityCoord, this.vehicleCoord)  > 3) // chiffre choisi arbitrairement pour supposer que le vehicle est rentrer a la base
 			{
-				System.out.println("je vais caserne ");
+				System.out.println("\n[$] Je vais à la caserne :" + this.interventionVehicle.getId());
 				// on deplace le vehicule suivant le niveau de deplacement choisi
 				switch(this.niveauDeplacement)
 				{
 				case 1:
-					this.teleportation(this.facilityCoord);
+					this.moveVehicle(this.facilityCoord);
 					break;
 					
 				case 2: 
-					this.deplacementLigneDroite(this.facilityCoord);
-					break;
-					
-				case 3:
 					if ( !this.itineraire.isEmpty())
 					{
-						this.deplacementGPS(this.itineraire.get(0));
+						this.moveVehicle(this.itineraire.get(0));
 						this.itineraire.remove(0);
 						
 					}
 					else
 					{
-						this.deplacementGPS(this.facilityCoord);
+						this.moveVehicle(this.facilityCoord);
+						
+					}
+					break;
+					
+				case 3:
+					if ( !this.itineraire.isEmpty())
+					{
+						this.moveVehicle(this.itineraire.get(0));
+						this.itineraire.remove(0);
+						
+					}
+					else
+					{
+						this.moveVehicle(this.facilityCoord);
 						
 					}
 					break;
@@ -165,7 +196,8 @@ public class VehicleRunnable implements Runnable{
 		// potentiellement mettre le Tread en pause plutot que de le tuer
 		
 		// prevenir la facility de la fin de l'intervention
-		System.out.println("endfire vhicle");
+		
+		System.out.println("Mission finie :" + this.interventionVehicle.getId());
 		VehicleTools.notifyFacilityEndFire(this.fireId);
 		
 		
@@ -197,7 +229,7 @@ public class VehicleRunnable implements Runnable{
 	}
 
 
-	private void teleportation(Coord coordDestinationFinale) {
+	private void moveVehicle(Coord coordDestinationFinale) {
 		// TODO Auto-generated method stub
 		
 		this.interventionVehicle.setLat(coordDestinationFinale.getLat());
@@ -207,52 +239,24 @@ public class VehicleRunnable implements Runnable{
 		
 	}	
 	
-	private void deplacementLigneDroite(Coord coordDestinationFinale) {
-		
-		Coord newCoord = this.calculNouvellesCoords(this.vehicleCoord, 20,  this.calculAngle(this.vehicleCoord, coordDestinationFinale)); // 20 distance en metre de depalcement arbitraire
-		
-		this.interventionVehicle.setLat(newCoord.getLat());
-		this.interventionVehicle.setLon(newCoord.getLon());
-		VehicleTools.deplacementVehicle(this.interventionVehicle);
-	}
 	
-	private void deplacementGPS(Coord coordDestinationFinale) {
-		
-		this.interventionVehicle.setLat(coordDestinationFinale.getLat());
-		this.interventionVehicle.setLon(coordDestinationFinale.getLon());
-		
-		VehicleTools.deplacementVehicle(this.interventionVehicle);
-		
-	}
-
-	// Source methode de calcul : https://www.sunearthtools.com/fr/tools/distance.php#txtDist_5
-	private Coord calculNouvellesCoords(Coord coordInit, int distance, double angle) // distance en metre angle en radian
+	private  List<Coord> calculNouvellesCoords(Coord coordInit, Coord coodFinale, int nbDeplacement) //
 	{
 		
+		List<Coord> deplacementList = new ArrayList<>();
 		
-		double newLat = Math.asin( 
-				Math.sin( coordInit.getLat()) * Math.cos( distance / VehicleRunnable.R ) +
-				Math.cos( coordInit.getLat() ) * Math.sin( distance / VehicleRunnable.R ) * Math.cos( angle )
-				);
+		for (int i = 0 ; i<= nbDeplacement; i++)
+		{
+			
+			double newLat = coordInit.getLat() + ((float)i/ nbDeplacement) * ( coodFinale.getLat() - coordInit.getLat()) ;
+			double newLon = coordInit.getLon() + ((float)i/nbDeplacement) * ( coodFinale.getLon() - coordInit.getLon()) ;
 	
+			System.out.println("Coord : " + newLat +" : " + newLon + "\n\n");
+			deplacementList.add(new Coord(newLon, newLat));
+		}
 		
-		double newLon = coordInit.getLon() + Math.atan2(
-				Math.sin(angle) * Math.sin(distance / VehicleRunnable.R) * Math.cos(coordInit.getLon()),
-				Math.cos((double) (distance / VehicleRunnable.R)) - Math.sin(coordInit.getLon()) * Math.sin(newLat) );
-		
-		return new Coord(newLon, newLat);
+		return deplacementList;
 	}
 	
-	private double calculAngle(Coord depart, Coord destination)
-	{
-		double deltaPhi = Math.log(
-				Math.tan(destination.getLat() / 2 + Math.PI/4) / 
-				Math.tan(depart.getLat() / 2 + Math.PI/4) 
-				);
-		 double deltaLon =Math.floorMod((long) Math.abs( depart.getLon() - destination.getLon()), 180) ;
-		 
-		 return Math.atan2(deltaLon, deltaPhi);
-		
-	}
 	
 }

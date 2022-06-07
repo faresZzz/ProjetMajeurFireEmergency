@@ -38,12 +38,13 @@ public class VehicleService {
 		this.vehicle = VehicleTools.getVehicle(idVehicle); // on recupere le vehicle
 		this.facility = VehicleTools.getFacility(vehicle.getFacilityRefID()); // on recupere la facility associer
 		
-		this.vehicleRunnable = new VehicleRunnable(vehicle, fire, new Coord(this.facility.getLon(), this.facility.getLat()), 3); // on creé le runnable
+		this.vehicleRunnable = new VehicleRunnable(vehicle, fire, new Coord(this.facility.getLon(), this.facility.getLat()), 2); // on creé le runnable
 		
 		this.vehicleTread = new Thread(this.vehicleRunnable);// on creé le Thread 
 		this.vehicleTread.start();// on lance le Tread
 		
 		return true;
 	}
+	
 
 }

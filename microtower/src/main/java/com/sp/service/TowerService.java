@@ -60,7 +60,7 @@ public class TowerService {
 		this.fire_map = new HashMap<Integer,FireDto>();
 		 
 		 for (FireDto fi : fires) {
-			 System.out.println("\n[$] New fire : "+fi.getId());
+			 System.out.println("\n[$]  "+java.time.LocalTime.now()+" New fire : "+fi.getId());
 			this.fire_map.put(fi.getId(), fi);
 		}
 		
@@ -81,7 +81,7 @@ public class TowerService {
 		{
 			/* Si cette facility est une des notres*/
 			if(our_facilities_id.contains(facilityDto.getId())) {
-				System.out.println("\n[$] New Facility : "+facilityDto.getId());
+				System.out.println("\n[$] "+java.time.LocalTime.now()+" New Facility : "+facilityDto.getId());
 				
 				/* Ajout de la facility a la notre*/
 				facility_map.put(facilityDto.getId(),facilityDto);
@@ -96,21 +96,30 @@ public class TowerService {
 	 * */
 	public void determineFireForAllFacilities(){
 		for (FacilityDto fa : facility_map.values()) {
-			this.determineFireForOneFacility(fa.getId());
+			while(this.determineFireForOneFacility(fa.getId())) {};
+			
 		}
 	}
 	
 	/**
 	 * Determine le meilleur feu pour une facility
 	 * */
-	public void determineFireForOneFacility(Integer facility_id) {
+	public boolean determineFireForOneFacility(Integer facility_id) {
 		FacilityDto fa = this.facility_map.get(facility_id);
 		FireDto fi = this.getClosestFire(fa);
-		System.out.println("\n[$] Facility "+fa.getId()+" is assigned fire "+fi.getId());
+		Boolean ret =  this.sendFire(fi, fa);
 		
+		if(ret) 
+		{
+			System.out.println("\n[$] "+java.time.LocalTime.now()+" Facility "+fa.getId()+" is assigned fire "+fi.getId());
+			this.facilityInActionFire.put(fi.getId(), fa.getId());
+		}
+		else
+		{
+			//System.out.println("\n[$] "+java.time.LocalTime.now()+" Facility "+fa.getId()+" has refused the Fire "+fi.getId());
+		}
 		
-		this.facilityInActionFire.put(fi.getId(), fa.getId());
-		this.sendFire(fi, fa);
+		return ret;
 	}
 	
 	/**
@@ -118,13 +127,19 @@ public class TowerService {
 	 * */
 	
 	public void recieveEndedFire(int fireId) {
-		FireDto f = fire_map.get(fireId);
+		try {
+			FireDto f = fire_map.get(fireId);
+			
+			System.out.println("\n[$] "+java.time.LocalTime.now()+" Fire "+f.getId()+" has been ended");
+			
+			this.fire_map.remove(f.getId());
+			this.determineFireForOneFacility(this.facilityInActionFire.get(f.getId()));
+			this.facilityInActionFire.remove(f.getId());
+		}
+		catch (Exception e){
+			System.out.println("\n[$] Error "+e);
+		}
 		
-		System.out.println("\n[$] Fire "+f.getId()+" has been ended");
-		
-		this.fire_map.remove(f.getId());
-		this.determineFireForOneFacility(this.facilityInActionFire.get(f.getId()));
-		this.facilityInActionFire.remove(f.getId());
 		
 	}
 	
