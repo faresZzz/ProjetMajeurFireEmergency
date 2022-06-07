@@ -115,7 +115,7 @@ public class TowerService {
 	}
 	
 	
-	public void endFire(FireDto fire, int fireId)
+	public void endFire(int fireId)
 	{
 		// suppression du feu de la liste des feux
 		if (this.managed_fire_set.containsKey(fireId))

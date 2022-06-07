@@ -33,8 +33,8 @@ public class TowerRestCrt {
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value = "/endFire/{fireId}")
-	public void endFire(@RequestBody FireDto fire, @PathVariable String fireId) {
-		towerService.endFire(fire, Integer.valueOf(fireId));
+	public void endFire( @PathVariable String fireId) {
+		towerService.endFire(Integer.valueOf(fireId));
 	}
 	
 	

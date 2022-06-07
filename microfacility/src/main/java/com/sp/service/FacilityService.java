@@ -134,6 +134,8 @@ public class FacilityService {
 				vehicleSet.add(FacilityTools.getVeHicleById(vehicleId));
 			}
 			this.vehicleByFacility.put(facilityId, vehicleSet );
+			System.out.println("ICI");
+			System.out.println(this.vehicleByFacility);
 			
 		}
 	}
@@ -291,14 +293,14 @@ public class FacilityService {
 	}
 
 
-	public void endFire(FireDto fire, Integer idFire) {
+	public void endFire(int idFire) {
 		
 		if (this.listeVehicleEnInter.containsKey(idFire))
 		{
 			// suppresion du feu et donc liberation du vehicle
 			this.listeVehicleEnInter.remove(idFire); 
 			// on previent la tour de controle que le feu est fini
-			FacilityTools.updateControlTower(fire);
+			FacilityTools.updateControlTower(idFire);
 		}
 	
 	}

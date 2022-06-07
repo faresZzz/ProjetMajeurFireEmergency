@@ -39,9 +39,9 @@ public class FacilityTools {
 	}
 
 
-	public static void updateControlTower(FireDto fire) {
+	public static void updateControlTower(int fireId) {
 		
-		restTemplate.put( URLTOWER_SERVICE + "/endFire/" + fire.getId(), fire);
+		restTemplate.put( URLTOWER_SERVICE + "/endFire/" + fireId, "nada",String.class);
 
 		
 	}

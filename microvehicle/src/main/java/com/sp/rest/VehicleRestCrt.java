@@ -22,6 +22,7 @@ public class VehicleRestCrt {
 	 * */
 	@RequestMapping(method = RequestMethod.POST, value = "/newMission/{idVehicle}") // utilisation de la method post afin de pouvoir recupere une info avec restTemplate
 	public boolean newMission(@PathVariable String idVehicle, @RequestBody FireDto fire) {
+		System.out.println("NEW MISION");
 		return vService.newMission(Integer.valueOf(idVehicle), fire);
 	}
 	

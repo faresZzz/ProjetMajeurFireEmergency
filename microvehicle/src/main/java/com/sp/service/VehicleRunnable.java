@@ -14,6 +14,7 @@ public class VehicleRunnable implements Runnable{
 	private boolean isFireEnd;
 	private boolean interventionEnd;
 	private int niveauDeplacement;
+	private int fireId; 
 	
 	private Coord facilityCoord;
 	private Coord fireCoord;
@@ -32,6 +33,7 @@ public class VehicleRunnable implements Runnable{
 		this.niveauDeplacement = niveauDeplacement;
 		
 		this.fire = fire;
+		this.fireId = fire.getId();
 		this.interventionVehicle = interventionVehicle;
 		
 		this.facilityCoord = facilityCoord;
@@ -54,6 +56,7 @@ public class VehicleRunnable implements Runnable{
 			// si le vehicule n'est pas arriver dans le range du feu, c'est a dire sur le lieux d'intervention
 			if (GisTools.computeDistance2(this.fireCoord, this.vehicleCoord)  > this.fire.getRange())
 			{
+				System.out.println("je vais au feu ");
 				// on deplace le vehicule suivant le niveau de deplacement choisi
 				switch(this.niveauDeplacement)
 				{
@@ -66,16 +69,29 @@ public class VehicleRunnable implements Runnable{
 					break;
 					
 				case 3:
-					this.deplacementGPS(this.itineraire.get(0));
-					this.itineraire.remove(0);
+					if (!this.itineraire.isEmpty())
+					{
+						this.deplacementGPS(this.itineraire.get(0));
+						this.itineraire.remove(0);
+						
+					}
+					else
+					{
+						this.deplacementGPS(this.fireCoord);
+
+					}
 					break;
 				}
 				
-				// on update le vehicle et le feu
-				this.updateVehicle();
-				this.updateFire();
+				
 			}
-			
+			else
+			{
+				System.out.println("j'eteins le feu ");
+			}
+			// on update le vehicle et le feu
+			this.updateVehicle();
+			this.updateFire();
 			try {
 				Thread.sleep(1000); //sleep 1s;
 			} catch (InterruptedException e) {
@@ -84,6 +100,7 @@ public class VehicleRunnable implements Runnable{
 			} 
 			
 		}
+		//reteour a la base
 		if (this.niveauDeplacement == 3)
 		{
 			this.itineraire = VehicleTools.getItineraire(this.vehicleCoord,this.facilityCoord);
@@ -95,6 +112,7 @@ public class VehicleRunnable implements Runnable{
 			// si le vehicule n'est pas dans a la base( coord de la base)
 			if (GisTools.computeDistance2(this.facilityCoord, this.vehicleCoord)  > 3) // chiffre choisi arbitrairement pour supposer que le vehicle est rentrer a la base
 			{
+				System.out.println("je vais caserne ");
 				// on deplace le vehicule suivant le niveau de deplacement choisi
 				switch(this.niveauDeplacement)
 				{
@@ -107,13 +125,21 @@ public class VehicleRunnable implements Runnable{
 					break;
 					
 				case 3:
-					this.deplacementGPS(this.itineraire.get(0));
-					this.itineraire.remove(0);
+					if ( !this.itineraire.isEmpty())
+					{
+						this.deplacementGPS(this.itineraire.get(0));
+						this.itineraire.remove(0);
+						
+					}
+					else
+					{
+						this.deplacementGPS(this.facilityCoord);
+						
+					}
 					break;
 				}
 				
-				// on update le vehicule
-				this.updateVehicle();
+				
 				
 			}
 			else // si le vehicule est a la base alors l'intervention est terminer
@@ -124,6 +150,8 @@ public class VehicleRunnable implements Runnable{
 				this.interventionVehicle.setLiquidQuantity(this.interventionVehicle.getType().getLiquidCapacity());
 			}
 			
+			// on update le vehicule
+			this.updateVehicle();
 			
 			try {
 				Thread.sleep(1000); //sleep 1s;
@@ -137,7 +165,9 @@ public class VehicleRunnable implements Runnable{
 		// potentiellement mettre le Tread en pause plutot que de le tuer
 		
 		// prevenir la facility de la fin de l'intervention
-//		VehicleTools.notifyFacilityEndFire(this.fire);
+		System.out.println("endfire vhicle");
+		VehicleTools.notifyFacilityEndFire(this.fireId);
+		
 		
 	}
 

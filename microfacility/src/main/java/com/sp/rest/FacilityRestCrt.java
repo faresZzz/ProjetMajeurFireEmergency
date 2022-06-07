@@ -38,10 +38,9 @@ public class FacilityRestCrt {
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value = "/endFire/{idFire}")
-	public void endFire(@PathVariable String idFire, @RequestBody FireDto fire) {
+	public void endFire(@PathVariable String idFire) {
 		System.out.println(idFire);
-
-		fService.endFire(fire, Integer.valueOf( idFire));
+		fService.endFire(Integer.valueOf( idFire));
 	}
 	
 	

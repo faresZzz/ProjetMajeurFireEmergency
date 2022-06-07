@@ -32,21 +32,21 @@ public class VehicleTools {
 		
 	}
 
-	public static FacilityDto getFacility(Integer facilityRefID) {
+	public static FacilityDto getFacility(int facilityRefID) {
 		
 		RestTemplate restTemplate = new RestTemplate();
 		return restTemplate.getForObject(URlCPE_SERVICE + "facility/" + facilityRefID, FacilityDto.class);
 	}
 	
 	
-	public static VehicleDto getVehicle(Integer id) {
+	public static VehicleDto getVehicle(int id) {
 		RestTemplate restTemplate = new RestTemplate();
 		return restTemplate.getForObject(URlCPE_SERVICE + "vehicle/" + id, VehicleDto.class);
 		
 	}
 
 
-	public static FireDto getFire(Integer id) {
+	public static FireDto getFire(int id) {
 		RestTemplate restTemplate = new RestTemplate();
 		return restTemplate.getForObject(URlCPE_SERVICE + "fire/" +  id, FireDto.class);
 	}
@@ -102,11 +102,11 @@ public class VehicleTools {
 	}
 
 
-	public static void notifyFacilityEndFire(FireDto fire) {
+	public static void notifyFacilityEndFire(int fireId) {
 	
 		RestTemplate restTemplate = new RestTemplate();
 		
-		restTemplate.put( URLFACILIY_ENDFIRE + fire.getId(), fire);
+		restTemplate.put( URLFACILIY_ENDFIRE + fireId, "nada",String.class);
 		
 	}
 
