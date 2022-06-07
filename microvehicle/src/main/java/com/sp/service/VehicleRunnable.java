@@ -50,6 +50,12 @@ public class VehicleRunnable implements Runnable{
 		else if (this.niveauDeplacement == 3)
 		{
 			this.itineraire = VehicleTools.getItineraire(this.vehicleCoord, this.fireCoord);
+			if (this.itineraire.isEmpty())
+			{
+				this.teleportation(facilityCoord);
+				this.isFireEnd = true;
+				this.interventionEnd = true;
+			}
 		}
 		// tant que le feu n'est pas terminer
 		while (!this.isFireEnd)
@@ -57,7 +63,7 @@ public class VehicleRunnable implements Runnable{
 			// si le vehicule n'est pas arriver dans le range du feu, c'est a dire sur le lieux d'intervention
 			if (GisTools.computeDistance2(this.fireCoord, this.vehicleCoord)  > this.fire.getRange())
 			{
-				System.out.println("je vais au feu ");
+				System.out.println("\n[$] Je vais au feu ");
 				// on deplace le vehicule suivant le niveau de deplacement choisi
 				switch(this.niveauDeplacement)
 				{
@@ -98,7 +104,7 @@ public class VehicleRunnable implements Runnable{
 			}
 			else
 			{
-				System.out.println("j'eteins le feu ");
+				System.out.println("\n[$] J'eteins le feu ");
 			}
 			// on update le vehicle et le feu
 			this.updateVehicle();
@@ -127,7 +133,7 @@ public class VehicleRunnable implements Runnable{
 			// si le vehicule n'est pas dans a la base( coord de la base)
 			if (GisTools.computeDistance2(this.facilityCoord, this.vehicleCoord)  > 3) // chiffre choisi arbitrairement pour supposer que le vehicle est rentrer a la base
 			{
-				System.out.println("je vais caserne ");
+				System.out.println("\n[$] Je vais à la caserne ");
 				// on deplace le vehicule suivant le niveau de deplacement choisi
 				switch(this.niveauDeplacement)
 				{
@@ -190,6 +196,7 @@ public class VehicleRunnable implements Runnable{
 		// potentiellement mettre le Tread en pause plutot que de le tuer
 		
 		// prevenir la facility de la fin de l'intervention
+		
 		System.out.println("endfire vhicle");
 		VehicleTools.notifyFacilityEndFire(this.fireId);
 		

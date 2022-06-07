@@ -25,9 +25,9 @@ public class TowerRestCrt {
 	}
 	
 
-	@RequestMapping(method = RequestMethod.PUT, value = "/endFire")
-	public void endFire(@RequestBody FireDto fire) {
-		towerService.recieveEndedFire(fire);
+	@RequestMapping(method = RequestMethod.PUT, value = "/endFire/{fireId}")
+	public void endFire(@PathVariable String fireId) {
+		towerService.recieveEndedFire(Integer.valueOf(fireId));
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/initTower")

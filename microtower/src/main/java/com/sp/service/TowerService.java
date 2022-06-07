@@ -1,6 +1,7 @@
 package com.sp.service;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -30,12 +31,10 @@ import com.sp.tools.TowerTools;
  */
 @Service
 public class TowerService {
-	 
-
 	
+	private ArrayList<Integer> our_facilities_id;
 	private Map<Integer,FireDto> fire_map; // Id avec le feu associé
 	private Map<Integer,FacilityDto> facility_map; // Id avec la facility associée
-	
 	private Map<Integer,Set<Integer>> fireInRangeFacility; // Lie les facilities et les feux qui sont dans le range  
 	private Map<Integer,Integer> facilityInActionFire; // lie les feu et les facilities qui sont entraint de s'en occuper
 	
@@ -51,11 +50,17 @@ public class TowerService {
 	 * La tour ne sait pas quel camion gere le feu mais connait la facility
 	 * */
 	public void initTower(FireDto[] fires) {
+		/* Initialisations de la liste de nos facilities */
+		our_facilities_id = new ArrayList<Integer>(Arrays.asList(
+			249
+			));
+		
 		this.facilityInActionFire = new HashMap<Integer,Integer>();
-		 this.getFacilities();
-		 this.fire_map = new HashMap<Integer,FireDto>();
+		this.getFacilities();
+		this.fire_map = new HashMap<Integer,FireDto>();
 		 
 		 for (FireDto fi : fires) {
+			 System.out.println("\n[$]  "+java.time.LocalTime.now()+" New fire : "+fi.getId());
 			this.fire_map.put(fi.getId(), fi);
 		}
 		
@@ -74,7 +79,14 @@ public class TowerService {
 		/* Change cet objet Array en Liste */
 		for (FacilityDto facilityDto : Arrays.asList(resp)) 
 		{
-			facility_map.put(facilityDto.getId(),facilityDto);
+			/* Si cette facility est une des notres*/
+			if(our_facilities_id.contains(facilityDto.getId())) {
+				System.out.println("\n[$] "+java.time.LocalTime.now()+" New Facility : "+facilityDto.getId());
+				
+				/* Ajout de la facility a la notre*/
+				facility_map.put(facilityDto.getId(),facilityDto);
+			}
+			
 		} 
 		
 	}
@@ -84,28 +96,50 @@ public class TowerService {
 	 * */
 	public void determineFireForAllFacilities(){
 		for (FacilityDto fa : facility_map.values()) {
-			FireDto fi = this.getClosestFire(fa);
-			this.facilityInActionFire.put(fi.getId(), fa.getId());
-			this.sendFire(fi, fa);
+			while(this.determineFireForOneFacility(fa.getId())) {};
 			
 		}
 	}
 	
-	public void determineFireForOneFacility(Integer facility_id) {
+	/**
+	 * Determine le meilleur feu pour une facility
+	 * */
+	public boolean determineFireForOneFacility(Integer facility_id) {
 		FacilityDto fa = this.facility_map.get(facility_id);
 		FireDto fi = this.getClosestFire(fa);
-		this.facilityInActionFire.put(fi.getId(), fa.getId());
-		this.sendFire(fi, fa);
+		Boolean ret =  this.sendFire(fi, fa);
+		
+		if(ret) 
+		{
+			System.out.println("\n[$] "+java.time.LocalTime.now()+" Facility "+fa.getId()+" is assigned fire "+fi.getId());
+			this.facilityInActionFire.put(fi.getId(), fa.getId());
+		}
+		else
+		{
+			//System.out.println("\n[$] "+java.time.LocalTime.now()+" Facility "+fa.getId()+" has refused the Fire "+fi.getId());
+		}
+		
+		return ret;
 	}
 	
 	/**
 	 * Cas ou un feu est finit, permet de notifier le
 	 * */
 	
-	public void recieveEndedFire(FireDto f) {
-		this.fire_map.remove(f.getId());
-		this.determineFireForOneFacility(this.facilityInActionFire.get(f.getId()));
-		this.facilityInActionFire.remove(f.getId());
+	public void recieveEndedFire(int fireId) {
+		try {
+			FireDto f = fire_map.get(fireId);
+			
+			System.out.println("\n[$] "+java.time.LocalTime.now()+" Fire "+f.getId()+" has been ended");
+			
+			this.fire_map.remove(f.getId());
+			this.determineFireForOneFacility(this.facilityInActionFire.get(f.getId()));
+			this.facilityInActionFire.remove(f.getId());
+		}
+		catch (Exception e){
+			System.out.println("\n[$] Error "+e);
+		}
+		
 		
 	}
 	
@@ -155,20 +189,30 @@ public class TowerService {
 	}
 	
 	/**
-	 * Prendle feu le plus proche de la facility
+	 * Prend le feu le plus proche de la facility si celui-ci n'est pas deja traité 
+	 * @param FacilityDto fa : la facility dont on veut connaitre le feu le plus proche disponible
+	 * @return FireDto fire: retourne la référence du feu le plus proche
 	 * */
 	private FireDto getClosestFire(FacilityDto fa) {
 		
 		float min_dist = 1000000000000f;
 		FireDto ret = null; 
 		
+		/* Pour chaque feu dans la map*/
 		for (FireDto fi : fire_map.values()) {
-			float dist = this.calculateDistance(fa, fi); // Calcule la distance min
 			
-			if(dist < min_dist) {
-				min_dist = dist;
-				ret = fi;
+			/* Si le feu n'est pas deja traité */
+			if(!facilityInActionFire.containsKey(fi.getId())) 
+			{
+				/* Calculer la distance*/
+				float dist = this.calculateDistance(fa, fi); // Calcule la distance min
+				
+				if(dist < min_dist) {
+					min_dist = dist;
+					ret = fi;
+				}
 			}
+			
 		}
 		return ret;
 	}
@@ -176,29 +220,22 @@ public class TowerService {
 	
 	
 	/**
-	 * Send fire
+	 * Permet d'envoyer le feu à la facility voulut
 	 * */
 	public Boolean sendFire(FireDto fi, FacilityDto fa) { 
 		Boolean ret = false;
 		try {
-	
+
+			/* Utiliser nos outils pour faire une requete POST a la caserne avec l'info du feu*/
 			ret = TowerTools.sendFire(fa.getId(), fi);
 			
 		}
+		/* Gestion des exceptions HTTP*/
+		
 		catch( HttpClientErrorException httpClientErrorException) {
 			System.out.println(httpClientErrorException.getResponseBodyAsString()); 
 		}
 		return ret;
-	}
-	
-	
-	public void endFire(int fireId)
-	{
-		// suppression du feu de la liste des feux
-		if (this.managed_fire_set.containsKey(fireId))
-		{			
-			managed_fire_set.remove(fireId);
-		}
 	}
 }
 	

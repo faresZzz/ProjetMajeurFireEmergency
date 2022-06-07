@@ -80,7 +80,7 @@ public class UpdateRunnable implements Runnable {
 			}
 			else {
 				rest_template.postForObject(URL_POST_NEWFIRE, convertToDto(fire_http), Boolean.class);
-				System.out.println("\n New Fire \n");
+				System.out.println("\n[$] "+java.time.LocalTime.now()+" New Fire : "+fire_http.getId());
 				frepo.save(fire_http);
 			}
 		}
@@ -89,7 +89,7 @@ public class UpdateRunnable implements Runnable {
 		for (Fire fire_repo : fires_repo) {
 			if(!valid_id_fire.contains(fire_repo.getId())) {
 				//rest_template.postForObject(URL_POST_DELETEFIRE, convertToDto(fire_repo), Boolean.class);
-				System.out.println("\n Fire Out! \n");
+				System.out.println("\n[$]  "+java.time.LocalTime.now()+" Fire Out : "+fire_repo.getId());
 				frepo.delete(fire_repo);
 			}
 		}
@@ -142,12 +142,15 @@ public class UpdateRunnable implements Runnable {
 	    return fdto;
 	}
 	
+	/**
+	 * Permet d'envoyer les feu à l'initialisation du programme
+	 * */
 	private void sendFirstFires() {
 		ArrayList<FireDto> fdto_list = new ArrayList<FireDto>();
 		
 		for (Fire f : frepo.findAll()) {
 			fdto_list.add(convertToDto(f));
-			System.out.println("\n New Fire \n");
+			System.out.println("\n[$]  "+java.time.LocalTime.now()+"  First Fire : "+f.getId());
 		} ;
 		rest_template.postForObject(URL_POST_INITTOWER, fdto_list, Boolean.class);
 	}
