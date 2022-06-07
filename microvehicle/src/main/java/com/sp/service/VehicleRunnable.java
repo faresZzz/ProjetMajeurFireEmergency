@@ -45,14 +45,14 @@ public class VehicleRunnable implements Runnable{
 	{
 		if (this.niveauDeplacement == 2)
 		{
-			this.itineraire = this.calculNouvellesCoords(vehicleCoord, fireCoord, 20);
+			this.itineraire = this.calculNouvellesCoords(vehicleCoord, fireCoord, GisTools.computeDistance2(this.fireCoord, this.vehicleCoord));
 		}
 		else if (this.niveauDeplacement == 3)
 		{
 			this.itineraire = VehicleTools.getItineraire(this.vehicleCoord, this.fireCoord);
 			if (this.itineraire.isEmpty())
 			{
-				this.teleportation(facilityCoord);
+				this.moveVehicle(facilityCoord);
 				this.isFireEnd = true;
 				this.interventionEnd = true;
 			}
@@ -120,7 +120,7 @@ public class VehicleRunnable implements Runnable{
 		//retour a la base
 		if (this.niveauDeplacement == 2)
 		{
-			this.itineraire = this.calculNouvellesCoords(vehicleCoord, facilityCoord, 20);
+			this.itineraire = this.calculNouvellesCoords(vehicleCoord, facilityCoord, GisTools.computeDistance2(this.facilityCoord, this.vehicleCoord));
 		}
 		else if (this.niveauDeplacement == 3)
 		{
@@ -240,16 +240,16 @@ public class VehicleRunnable implements Runnable{
 	}	
 	
 	
-	private  List<Coord> calculNouvellesCoords(Coord coordInit, Coord coodFinale, int nbDeplacement) //
+	private  List<Coord> calculNouvellesCoords(Coord coordInit, Coord coodFinale, int distance) //
 	{
 		
 		List<Coord> deplacementList = new ArrayList<>();
 		
-		for (int i = 0 ; i<= nbDeplacement; i++)
+		for (int i = 0 ; i<= distance; i++)
 		{
 			
-			double newLat = coordInit.getLat() + ((float)i/ nbDeplacement) * ( coodFinale.getLat() - coordInit.getLat()) ;
-			double newLon = coordInit.getLon() + ((float)i/nbDeplacement) * ( coodFinale.getLon() - coordInit.getLon()) ;
+			double newLat = coordInit.getLat() + ((float)i/ distance) * ( coodFinale.getLat() - coordInit.getLat()) ;
+			double newLon = coordInit.getLon() + ((float)i/distance) * ( coodFinale.getLon() - coordInit.getLon()) ;
 	
 			System.out.println("Coord : " + newLat +" : " + newLon + "\n\n");
 			deplacementList.add(new Coord(newLon, newLat));
