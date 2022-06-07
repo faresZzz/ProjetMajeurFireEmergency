@@ -60,7 +60,7 @@ public class TowerService {
 		this.fire_map = new HashMap<Integer,FireDto>();
 		 
 		 for (FireDto fi : fires) {
-			 System.out.println("\n[$]  "+java.time.LocalTime.now()+"New fire : "+fi.getId());
+			 System.out.println("\n[$]  "+java.time.LocalTime.now()+" New fire : "+fi.getId());
 			this.fire_map.put(fi.getId(), fi);
 		}
 		
@@ -116,7 +116,7 @@ public class TowerService {
 		}
 		else
 		{
-			System.out.println("\n[$] "+java.time.LocalTime.now()+" Facility "+fa.getId()+" has refused the Fire "+fi.getId());
+			//System.out.println("\n[$] "+java.time.LocalTime.now()+" Facility "+fa.getId()+" has refused the Fire "+fi.getId());
 		}
 		
 		return ret;

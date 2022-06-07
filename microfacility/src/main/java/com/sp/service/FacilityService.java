@@ -39,103 +39,28 @@ public class FacilityService {
 	private Map <Integer, Set<VehicleDto>> vehicleByFacility = new HashMap<Integer, Set<VehicleDto>>(); //Map (idFaciliy  List(idVehicle))
 	private Map<Integer, VehicleDto> listeVehicleEnInter = new HashMap<Integer, VehicleDto>();    // Map fireId, vehicleId
 	private  static int niveauDifficulter = 1;
-	/*
-	 * Methodesinterface
-	 * */
-	
-	/**
-	 *  Permet d'initialiser les vehicules
-	 * */
-//	public List<VehicleDto> getVehicle() {
-//		// TODO : Chnager la methode quand on pourra obtenir la liste automatiquement
-//		this.listFacilityRefID.add(249);
-//		return null;
-//		
-//		this.updateFacilities();
-//		return listVehicle;
-//	}
-	
-	/**
-	 * Permet de mettre a jour la db de vehicules
-	 * */
-	public void updateFacilities() {
-		
-//		/* Permet de recuperer tout les facility*/
-//		HashMap<Integer,Facility> hash_map = this.getHashMap((ArrayList<Facility>)getHTTPFacilities());
-//		
-//		/* Pour les id de camions dans la liste de notre equipe*/
-//		for (Integer id:this.list_id) {
-//			/* Si le hashmap a un camion qui contient cet id, le sauvegarder*/
-//			if(hash_map.containsKey(id.hashCode())) {
-//				fRepository.save(hash_map.get(id.hashCode()));
-//			}
-//		}
-	}
-	
-    
-	public List<VehicleDto> getHTTPVehicle(String facilityRefID) {
-		
-		/**
-		 * Permet d'appeller via un get http une liste en json convertie en liste d'objet java
-		 * */
-		
-		Integer idCaserne = Integer.valueOf(facilityRefID);
-		
-		VehicleDto[] Vehicle = FacilityTools.getVehicle();
-		for (VehicleDto vehicleDto : Vehicle) {
-			if ((int)idCaserne == (int) vehicleDto.getFacilityRefID()) {			
-				listVehicle.add(vehicleDto);			
-			}
-		}
-		return listVehicle;
-	}
-	
-	
-	public boolean envoyerCamion(List<VehicleDto> listVehicle , FireDto fire) {
-		// TODO Auto-generated method stub
-		boolean ret = false;
-		for (VehicleDto vehicle : listVehicle) {
-			
-			if ( !listVehicleEnInterventions.contains(vehicle.getId())) {
-				listVehicleEnInterventions.add(vehicle.getId());
-				FacilityTools.envoyerVehicleEnMission(vehicle.getId(), fire);
-				ret = true; 
-				break;
-			}
-		}
-		return ret;
-		
-	}
-	
-	/**
-	 * Permet de convertir un array en hashmap en utilisant
-	 
-	public HashMap<Integer,Facility> getHashMap(ArrayList<Facility> facilities){
-		HashMap<Integer,Facility> ret = new HashMap<Integer,Facility>();
-		
-		for (Facility f : facilities) {
-			ret.put(f.hashCode(), f);
-		}
-		
-		return ret;
-	}
-	* */
 
 	
+ 
 	
 	public void InitFacilities()
 	{
 		for(int facilityId : LIST_FACILITY_ID)
 		{
 			FacilityDto facility = FacilityTools.getFacility(facilityId);
+			System.out.println("\n[$] "+java.time.LocalTime.now()+" Facility "+facility.getId()+" has been initialised at :"+facility.getLat()+"|"+facility.getLon());
 			Set<VehicleDto> vehicleSet = new HashSet<VehicleDto>();
 			for (Integer vehicleId : facility.getVehicleIdSet())
 			{
 				vehicleSet.add(FacilityTools.getVeHicleById(vehicleId));
 			}
 			this.vehicleByFacility.put(facilityId, vehicleSet );
-			System.out.println("ICI");
-			System.out.println(this.vehicleByFacility);
+			for (Integer id_fac : this.vehicleByFacility.keySet()) {
+				for (VehicleDto v : this.vehicleByFacility.get(id_fac)) {
+					System.out.println("\n[$] "+java.time.LocalTime.now()+" Facility "+id_fac+" has the vehicle "+v.getId());
+				}
+				
+			}
 			
 		}
 	}
@@ -182,6 +107,7 @@ public class FacilityService {
 			// !!!!! attention pas sur de ce test card type vehicleDTO donc depend de comment il fait sont test et si l'on a pas fait de copie au milieux
 			if (!this.listeVehicleEnInter.containsValue(vehicle)) // on test s'il n'est pas deja en intervention
 			{
+				System.out.println("J'envoie le camion : " + vehicle.getId() +" au feu " + fire.getId());
 				this.listeVehicleEnInter.put(fire.getId(), vehicle);
 				FacilityTools.envoyerVehicleEnMission(vehicle.getId(), fire);
 				affectationVehicle = true;

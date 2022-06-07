@@ -65,29 +65,33 @@ public class VehicleTools {
 		
 		
 		// Extraction des coordonnées gps de la reponse
+		List<Coord> trajetCoord = new ArrayList<Coord>();
+	
 		JSONObject jsonReponse = new JSONObject(reponse);
-				
-		 JSONArray arrayRoute =  jsonReponse.getJSONArray("routes");
-		 JSONObject routeJson = new JSONObject( arrayRoute.get(0).toString());
+		JSONArray arrayRoute =  jsonReponse.getJSONArray("routes");
+		if (!arrayRoute.isEmpty())
+		{
+			JSONObject routeJson = new JSONObject( arrayRoute.get(0).toString());
+			JSONObject geometrie = routeJson.getJSONObject("geometry");
 		 
-		 JSONObject geometrie = routeJson.getJSONObject("geometry");
+			JSONArray coordinates = geometrie.getJSONArray("coordinates");
+
+			// conversion des coodonées GPS et conversion en obj Coords
+			for (int i = 0; i < coordinates.length(); i++) {
+				String[] coords = coordinates.get(i).toString().split(",");
+
+				StringBuffer coord1String = new StringBuffer(coords[0]);
+				StringBuffer coord2String = new StringBuffer(coords[1]);
+
+				double lon = Double.parseDouble(coord1String.deleteCharAt(0).toString());
+				double lat = Double.parseDouble(coord2String.deleteCharAt(coord2String.length() - 1).toString());
+
+				trajetCoord.add(new Coord(lon, lat));
+
+			}
+			 
+		 }
 		 
-		 JSONArray coordinates = geometrie.getJSONArray("coordinates");
-		 
-		 // conversion des coodonées GPS et conversion en obj Coords
-		 List<Coord> trajetCoord = new ArrayList();
-		 for (int i = 0; i < coordinates.length(); i++) {
-			 String[] coords = coordinates.get(i).toString().split(",");
-			 
-			 StringBuffer coord1String = new StringBuffer(coords[0]);
-			 StringBuffer coord2String = new StringBuffer(coords[1]);
-			 
-			  double lon = Double.parseDouble(coord1String.deleteCharAt(0).toString());
-			  double lat = Double.parseDouble(coord2String.deleteCharAt(coord2String.length()-1).toString());
-			  
-			  trajetCoord.add(new Coord(lon, lat));
-			 
-		}
 		 
 		 return trajetCoord;
 		 
@@ -97,7 +101,7 @@ public class VehicleTools {
 	public static void main(String[] args)
 	{
 		Coord depart = new Coord(-84.518641,39.134270);
-		Coord arrive = new Coord(-84.512023,39.102779);
+		Coord arrive = new Coord(-4.0,39.102779);
 		System.out.println(VehicleTools.getItineraire(depart, arrive).toString());
 	}
 
