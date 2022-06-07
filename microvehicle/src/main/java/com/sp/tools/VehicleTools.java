@@ -7,12 +7,14 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.web.client.RestTemplate;
 
 import com.project.model.dto.Coord;
 import com.project.model.dto.FacilityDto;
 import com.project.model.dto.FireDto;
 import com.project.model.dto.VehicleDto;
+import com.sp.service.VehicleRunnable;
 
 public class VehicleTools {
 	
@@ -24,6 +26,7 @@ public class VehicleTools {
 	private static final String UUID = "0eb29fc1-d666-4dd6-9a6e-933f29f87689";
 	private static final String MAPBOX_TOKEN = "pk.eyJ1IjoiY2FwdGFpbjU1IiwiYSI6ImNsNDJveGVvNjAyejUzYm44aGYyMXY0dzIifQ.o1nuskLWQicA6hqPqMV0VA";
 	
+
 	
 	public static void deplacementVehicle(VehicleDto vehicle) {
 		// TODO Auto-generated method stub
@@ -94,23 +97,15 @@ public class VehicleTools {
 	}
 	
 	
-	public static void main(String[] args)
-	{
-		Coord depart = new Coord(-84.518641,39.134270);
-		Coord arrive = new Coord(-84.512023,39.102779);
-		System.out.println(VehicleTools.getItineraire(depart, arrive).toString());
-	}
-
-
 	public static void notifyFacilityEndFire(int fireId) {
-	
+		
 		RestTemplate restTemplate = new RestTemplate();
 		
 		restTemplate.put( URLFACILIY_ENDFIRE + fireId, "nada",String.class);
 		
 	}
-
-
 	
+	
+		
 
 }
