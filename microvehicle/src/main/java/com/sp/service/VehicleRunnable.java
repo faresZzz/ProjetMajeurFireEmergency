@@ -63,7 +63,7 @@ public class VehicleRunnable implements Runnable{
 			// si le vehicule n'est pas arriver dans le range du feu, c'est a dire sur le lieux d'intervention
 			if (GisTools.computeDistance2(this.fireCoord, this.vehicleCoord)  > this.fire.getRange())
 			{
-				System.out.println("\n[$] Je vais au feu ");
+				System.out.println("\n[$] Je vais au feu : " + this.interventionVehicle.getId());
 				// on deplace le vehicule suivant le niveau de deplacement choisi
 				switch(this.niveauDeplacement)
 				{
@@ -104,7 +104,7 @@ public class VehicleRunnable implements Runnable{
 			}
 			else
 			{
-				System.out.println("\n[$] J'eteins le feu ");
+				System.out.println("\n[$] J'eteins le feu :" + this.interventionVehicle.getId());
 			}
 			// on update le vehicle et le feu
 			this.updateVehicle();
@@ -133,7 +133,7 @@ public class VehicleRunnable implements Runnable{
 			// si le vehicule n'est pas dans a la base( coord de la base)
 			if (GisTools.computeDistance2(this.facilityCoord, this.vehicleCoord)  > 3) // chiffre choisi arbitrairement pour supposer que le vehicle est rentrer a la base
 			{
-				System.out.println("\n[$] Je vais à la caserne ");
+				System.out.println("\n[$] Je vais à la caserne :" + this.interventionVehicle.getId());
 				// on deplace le vehicule suivant le niveau de deplacement choisi
 				switch(this.niveauDeplacement)
 				{
@@ -197,7 +197,7 @@ public class VehicleRunnable implements Runnable{
 		
 		// prevenir la facility de la fin de l'intervention
 		
-		System.out.println("endfire vhicle");
+		System.out.println("Mission finie :" + this.interventionVehicle.getId());
 		VehicleTools.notifyFacilityEndFire(this.fireId);
 		
 		
