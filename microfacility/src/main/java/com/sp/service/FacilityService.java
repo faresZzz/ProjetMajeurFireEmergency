@@ -35,7 +35,7 @@ public class FacilityService {
 	private List<Integer> listVehicleEnInterventions = new ArrayList<Integer>() ;
 	
 	
-	private static List<Integer> LIST_FACILITY_ID = new ArrayList<Integer>( List.of(249));
+	private static List<Integer> LIST_FACILITY_ID = new ArrayList<Integer>( List.of(664791,664813));
 	private Map <Integer, Set<VehicleDto>> vehicleByFacility = new HashMap<Integer, Set<VehicleDto>>(); //Map (idFaciliy  List(idVehicle))
 	private Map<Integer, VehicleDto> listeVehicleEnInter = new HashMap<Integer, VehicleDto>();    // Map fireId, vehicleId
 	private  static int niveauDifficulter = 1;

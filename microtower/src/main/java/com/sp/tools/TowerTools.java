@@ -31,15 +31,15 @@ public class TowerTools {
 	}
 
 
-	public static boolean sendFire(int idCaserne, FireDto fire) { // on utilise pas fa ????
+	public static boolean sendFire(int idCaserne, FireDto fire) { 
 		
 		return restTemplate.postForObject(URL_PUT_FIRE_FACILITY + idCaserne, fire, Boolean.class);
-//		HttpEntity<FireDto> request = new HttpEntity<FireDto>(fire);
-//		restTemplate.exchange(
-//				URL_PUT_FIRE_FACILITY+fire.getId().toString(), 
-//				HttpMethod.POST, 
-//				request, 
-//				Boolean.class);
+	}
+
+
+	public static FacilityDto getFacility(int facilityId) {
+		
+		return restTemplate.getForObject(URL_GET_FACILITIES + "/" + facilityId, FacilityDto.class);
 	}
 
 }

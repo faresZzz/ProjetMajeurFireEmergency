@@ -17,8 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.project.model.dto.Coord;
 import com.project.model.dto.FacilityDto;
 import com.project.model.dto.FireDto;
+import com.project.tools.GisTools;
 import com.sp.tools.TowerTools;
 
 // 164 151
@@ -39,7 +41,83 @@ public class TowerService {
 	private Map<Integer,Integer> facilityInActionFire; // lie les feu et les facilities qui sont entraint de s'en occuper
 	
 	
+	private Map<FacilityDto, TowerRunnable> towerThreadByFacility;
+	
+	
+	/**
+	 * Permet d'initialiser les thread associer a chaque facility
+	 */
+	public void initThread( FireDto[] fires)
 
+	{
+		this.our_facilities_id = new ArrayList<Integer>(Arrays.asList(
+				664791, 
+				664813
+				));
+		
+		this.facility_map = new HashMap<Integer,FacilityDto>();
+		this.towerThreadByFacility = new HashMap<FacilityDto, TowerRunnable>();
+		this.facilityInActionFire = new HashMap<Integer,Integer>();
+		
+		for (Integer facilityId : this.our_facilities_id)
+		{
+			FacilityDto facility = TowerTools.getFacility(facilityId);
+			TowerRunnable tower = new TowerRunnable(facilityId);
+			Thread thread = new Thread( tower);
+			thread.start();
+			this.facility_map.put(facilityId, facility);
+			this.towerThreadByFacility.put(facility, tower);
+		}
+		
+		for (FireDto fire : fires)
+		{
+			this.newFire(fire);
+		}
+		
+	}
+	
+	
+	public void newFire(FireDto fire)
+	{	
+		System.out.println("\n[$]  "+java.time.LocalTime.now()+" New fire : "+fire.getId());
+//		if (this.towerThreadByFacility == null)
+//		{
+//			this.initThread();
+//		}
+		int distanceMin = 1000000000;
+		FacilityDto closestFacility = null;
+		for (Map.Entry<FacilityDto, TowerRunnable> tower : this.towerThreadByFacility.entrySet())
+		{
+			int distance = GisTools.computeDistance2(new Coord(fire.getLon(), fire.getLat()), new Coord(tower.getKey().getLon(), tower.getKey().getLat() ));
+			if (distance < distanceMin)
+			{
+				distanceMin = distance;
+				closestFacility = tower.getKey();
+			}
+			
+		}
+		
+		TowerRunnable tower = this.towerThreadByFacility.get(closestFacility);
+		tower.addFire(fire);
+		this.facilityInActionFire.put(fire.getId(), tower.getFacilityId());
+		
+	}
+	
+	public void finishedFire(int fireId)
+	{
+		int facilityId = this.facilityInActionFire.get(fireId);
+		
+		FacilityDto facility = this.facility_map.get(facilityId);
+		this.towerThreadByFacility.get(facility).endedFire(fireId);
+	}
+	
+	public void endAllOperations()
+	{// permet d'arreter tous les threads
+		for (Map.Entry<FacilityDto, TowerRunnable> tower : this.towerThreadByFacility.entrySet())
+		{
+			tower.getValue().setFinishOperations(true);
+		}
+	}
 	/*
 	 * Methodes
 	 * */
@@ -52,7 +130,7 @@ public class TowerService {
 	public void initTower(FireDto[] fires) {
 		/* Initialisations de la liste de nos facilities */
 		our_facilities_id = new ArrayList<Integer>(Arrays.asList(
-			249
+			664791, 664813
 			));
 		
 		this.facilityInActionFire = new HashMap<Integer,Integer>();

@@ -38,14 +38,17 @@ public class VehicleRunnable implements Runnable{
 		this.fireCoord = new Coord(fire.getLon(), fire.getLat());
 		this.vehicleCoord = new Coord(interventionVehicle.getLon(), interventionVehicle.getLat());
 		this.itineraire = new ArrayList<>();
-	}
+		
+
+		
+		}
 	
 	
 	public void run()
 	{
 		if (this.niveauDeplacement == 2)
 		{
-			this.itineraire = this.calculNouvellesCoords(vehicleCoord, fireCoord, GisTools.computeDistance2(this.fireCoord, this.vehicleCoord));
+			this.itineraire = this.calculNouvellesCoords(vehicleCoord, fireCoord, 20);
 		}
 		else if (this.niveauDeplacement == 3)
 		{
@@ -63,7 +66,7 @@ public class VehicleRunnable implements Runnable{
 			// si le vehicule n'est pas arriver dans le range du feu, c'est a dire sur le lieux d'intervention
 			if (GisTools.computeDistance2(this.fireCoord, this.vehicleCoord)  > this.fire.getRange())
 			{
-				System.out.println("\n[$] Je vais au feu : " + this.interventionVehicle.getId());
+				System.out.println("\n[$] Je suis " + this.interventionVehicle.getId() + " , je vais au feu : " + this.fireId );
 				// on deplace le vehicule suivant le niveau de deplacement choisi
 				switch(this.niveauDeplacement)
 				{
@@ -104,13 +107,13 @@ public class VehicleRunnable implements Runnable{
 			}
 			else
 			{
-				System.out.println("\n[$] J'eteins le feu :" + this.interventionVehicle.getId());
+				System.out.println("\n[$] Je suis " + this.interventionVehicle.getId() + " , je eteins le feu : " + this.fireId );
 			}
 			// on update le vehicle et le feu
 			this.updateVehicle();
 			this.updateFire();
 			try {
-				Thread.sleep(1000); //sleep 1s;
+				Thread.sleep(500); //sleep 1s;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -120,7 +123,7 @@ public class VehicleRunnable implements Runnable{
 		//retour a la base
 		if (this.niveauDeplacement == 2)
 		{
-			this.itineraire = this.calculNouvellesCoords(vehicleCoord, facilityCoord, GisTools.computeDistance2(this.facilityCoord, this.vehicleCoord));
+			this.itineraire = this.calculNouvellesCoords(vehicleCoord, facilityCoord, 20);
 		}
 		else if (this.niveauDeplacement == 3)
 		{
@@ -133,7 +136,7 @@ public class VehicleRunnable implements Runnable{
 			// si le vehicule n'est pas dans a la base( coord de la base)
 			if (GisTools.computeDistance2(this.facilityCoord, this.vehicleCoord)  > 3) // chiffre choisi arbitrairement pour supposer que le vehicle est rentrer a la base
 			{
-				System.out.println("\n[$] Je vais à la caserne :" + this.interventionVehicle.getId());
+				System.out.println("\n[$] Je suis " + this.interventionVehicle.getId() + " , je rentre a la caserne ");
 				// on deplace le vehicule suivant le niveau de deplacement choisi
 				switch(this.niveauDeplacement)
 				{
@@ -185,7 +188,7 @@ public class VehicleRunnable implements Runnable{
 			this.updateVehicle();
 			
 			try {
-				Thread.sleep(1000); //sleep 1s;
+				Thread.sleep(500); //sleep 1s;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -201,6 +204,16 @@ public class VehicleRunnable implements Runnable{
 		VehicleTools.notifyFacilityEndFire(this.fireId);
 		
 		
+	}
+
+
+	public FireDto getFire() {
+		return fire;
+	}
+
+
+	public void setFire(FireDto fire) {
+		this.fire = fire;
 	}
 
 
@@ -235,23 +248,22 @@ public class VehicleRunnable implements Runnable{
 		this.interventionVehicle.setLat(coordDestinationFinale.getLat());
 		this.interventionVehicle.setLon(coordDestinationFinale.getLon());
 		
+		
 		VehicleTools.deplacementVehicle(this.interventionVehicle);
 		
 	}	
 	
 	
-	private  List<Coord> calculNouvellesCoords(Coord coordInit, Coord coodFinale, int distance) //
+	private  List<Coord> calculNouvellesCoords(Coord coordInit, Coord coodFinale, int nbStep) //
 	{
 		
 		List<Coord> deplacementList = new ArrayList<>();
 		
-		for (int i = 0 ; i<= distance; i++)
+		for (int i = 0 ; i<= nbStep; i++)
 		{
 			
-			double newLat = coordInit.getLat() + ((float)i/ distance) * ( coodFinale.getLat() - coordInit.getLat()) ;
-			double newLon = coordInit.getLon() + ((float)i/distance) * ( coodFinale.getLon() - coordInit.getLon()) ;
-	
-			System.out.println("Coord : " + newLat +" : " + newLon + "\n\n");
+			double newLat = coordInit.getLat() + ((float)i/ nbStep) * ( coodFinale.getLat() - coordInit.getLat()) ;
+			double newLon = coordInit.getLon() + ((float)i/nbStep) * ( coodFinale.getLon() - coordInit.getLon()) ;
 			deplacementList.add(new Coord(newLon, newLat));
 		}
 		

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,18 +32,39 @@ public class VehicleService {
 	private VehicleDto vehicle;
 	private FacilityDto facility;
 	
-
+	private Map <Integer, Thread> theadMap = new HashMap<Integer, Thread> ();
+	
+	
+	private void initThread(int idVehicle, Thread thread)
+	{
+		
+	}
 	public boolean newMission(Integer idVehicle, FireDto fire) {
 		// TODO  potentiellement tester si le vehicle est disponible , tester la quantitié de liquide et de carburant 
-		
+		System.out.println("NEW MISSION");
 		this.vehicle = VehicleTools.getVehicle(idVehicle); // on recupere le vehicle
 		this.facility = VehicleTools.getFacility(vehicle.getFacilityRefID()); // on recupere la facility associer
 		
-		this.vehicleRunnable = new VehicleRunnable(vehicle, fire, new Coord(this.facility.getLon(), this.facility.getLat()), 1); // on creé le runnable
+		
+		this.vehicleRunnable = new VehicleRunnable(vehicle, fire, new Coord(this.facility.getLon(), this.facility.getLat()), 3); // on creé le runnable
 		
 		this.vehicleTread = new Thread(this.vehicleRunnable);// on creé le Thread 
 		this.vehicleTread.start();// on lance le Tread
 		
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		this.vehicleTread.suspend();
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		this.vehicleTread.resume();
 		return true;
 	}
 	
