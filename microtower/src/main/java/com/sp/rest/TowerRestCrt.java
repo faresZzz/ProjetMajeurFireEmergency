@@ -36,7 +36,7 @@ public class TowerRestCrt {
 		return true;
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/endAll")
+	@RequestMapping(method = RequestMethod.PUT, value = "/endAll")
 	public Boolean endAllTower() {
 		towerService.endAllOperations();
 		return true;
